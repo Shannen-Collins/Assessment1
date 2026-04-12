@@ -6,14 +6,34 @@
         xmlns:local="clr-namespace:Assessment1"
         mc:Ignorable="d"
         Title="ShannenMovieLibraryMS" Height="450" Width="800">
-    
-    <Grid>
-  <Button Content="Test"
-        Width="120"
-        Height="40"
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"/>
+    <Window.Resources> 
+        <!-- define the style for all buttons --> 
+        <Style TargetType="Button"> 
+            <Setter Property="Background" Value="#66cbff"/> 
+            <Setter Property="Foreground" Value="Black"/> 
+            <Setter Property="FontSize" Value="14"/> 
+            <Setter Property="FontFamily" Value="Gadugi"/> 
+            <Setter Property="MinWidth" Value="90"/> 
+            <Setter Property="MinHeight" Value="28"/> 
+            <Setter Property="Padding" Value="10, 0"/> 
+        </Style> 
 
+    </Window.Resources> 
+    <Grid Background="#d9effa">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="40,0,0,40">
+        <TextBox x:Name="txtSearch" Width="300" Height="25" Margin="0,40,0,0"/>
+        <Button x:Name="btnSearch" Content="Search" Margin="10,40,0,0"/>
+        </StackPanel>
+        
+        <DataGrid x:Name="dtgMovies" Margin="40,90,40,90" FontSize="16" FontFamily="Gadugi"/>
 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40,0,0,40">
+            <Button x:Name="btnAddMovie" Content="Add Movie" Margin="0,0,10,0"/>  
+            <Button x:Name="btnSortTitle" Content="Sort by Title" Margin="0,0,10,0"/>
+            <Button x:Name="btnSortYear" Content="Sort by Year" Margin="0,0,10,0"/>
+            <Button x:Name="btnImport" Content="Import Movie List" Margin="0,0,10,0"/>  
+            <Button x:Name="btnExport" Content="Export Movie List" Margin="0,0,10,0"/>  
+        </StackPanel>
     </Grid>
+
 </Window>
