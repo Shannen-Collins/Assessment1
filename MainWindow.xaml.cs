@@ -29,6 +29,21 @@ public partial class MainWindow : Window
 		return movies; 
 	} 
 
+	private void btnAddMovie_Click(object sender, RoutedEventArgs e) 
+		{ 
+		addPanel.Visibility = Visibility.Visible; 
+		} 
+
+	private void btnAddBack_Click(object sender, RoutedEventArgs e) 
+	{ 
+		addPanel.Visibility = Visibility.Collapsed; 
+		txtMovieID.Text = ""; 
+		txtTitle.Text = ""; 
+		txtDirector.Text = ""; 
+		txtGenre.Text = ""; 
+		txtYear.Text = ""; 
+	} 
+
 	private void SampleData()
 	{ 
 		movies.AddLast(new Movie() { ID = "M1", Title = "Back to the Future", Director = "Robert Zemeckis", Genre = "Sci-Fi", Year = 1985, Availability = "Available"}); 
