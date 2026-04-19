@@ -85,7 +85,7 @@
                     <TextBox x:Name="txtYear"/> 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10, 10, 10, 20"> 
                         <Button Content="Back" Click="btnAddBack_Click" Margin="10"/> 
-                        <Button Content="Save" Margin="10"/> 
+                        <Button Content="Save" Click="btnAddSave_Click" Margin="10"/> 
                     </StackPanel>
                 </StackPanel> 
             </Border>

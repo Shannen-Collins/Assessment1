@@ -33,6 +33,16 @@ public partial class MainWindow : Window
 		dtgMovies.ItemsSource = movieService.GetAll().ToList();  
 	} 
 
+	private void ClearAddMovieInputs()
+	{
+		addPanel.Visibility = Visibility.Collapsed; 
+		txtMovieID.Text = ""; 
+		txtTitle.Text = ""; 
+		txtDirector.Text = ""; 
+		txtGenre.Text = ""; 
+		txtYear.Text = ""; 
+	}
+
 	private void btnAddMovie_Click(object sender, RoutedEventArgs e) 
 	{ 
 		addPanel.Visibility = Visibility.Visible; 
@@ -40,13 +50,60 @@ public partial class MainWindow : Window
 
 	private void btnAddBack_Click(object sender, RoutedEventArgs e) 
 	{ 
-		addPanel.Visibility = Visibility.Collapsed; 
-		txtMovieID.Text = ""; 
-		txtTitle.Text = ""; 
-		txtDirector.Text = ""; 
-		txtGenre.Text = ""; 
-		txtYear.Text = ""; 
+		ClearAddMovieInputs();
 	} 
+
+	private void btnAddSave_Click(object sender, RoutedEventArgs e)
+	{ 
+		if (string.IsNullOrWhiteSpace(txtMovieID.Text) || 
+			string.IsNullOrWhiteSpace(txtTitle.Text) || 
+			string.IsNullOrWhiteSpace(txtDirector.Text) || 
+			string.IsNullOrWhiteSpace(txtGenre.Text) || 
+			string.IsNullOrWhiteSpace(txtYear.Text)) 
+			{ 
+				MessageBox.Show("Please fill in all details"); 
+				return; 
+			} 
+			
+		if (!int.TryParse(txtYear.Text, out int year)) 
+		{ 
+			MessageBox.Show("Please enter a valid year"); 
+			return; 
+		} 
+
+		Movie movie = new Movie() 
+		{ 
+			Movie_ID = txtMovieID.Text, 
+			Title = txtTitle.Text, 
+			Director = txtDirector.Text, 
+			Genre = txtGenre.Text, 
+			Release_Year = year, 
+			Availability = "Available" 
+		}; 
+
+		string result = movieService.AddMovie(movie);
+
+		if (result == "DuplicateID")
+		{
+			MessageBox.Show("This Movie ID alreadt exists, please chose another");
+			return;
+		}
+
+		if (result == "InvalidYear")
+		{
+			MessageBox.Show("Please enter a valid year");
+			return;
+		}
+
+		if (result != "Success")
+		{	
+			MessageBox.Show("An unknown error has occured");
+			return;
+		}
+
+		RefreshGrid();
+		ClearAddMovieInputs();
+	}
 
 }
 

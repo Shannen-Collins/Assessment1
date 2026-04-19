@@ -19,11 +19,24 @@ public class MovieService {
 
     private void SampleData()
 	{ 
-		movies.AddLast(new Movie() { Movie_ID = "M1", Title = "Back to the Future", Director = "Robert Zemeckis", Genre = "Sci-Fi", Release_Year = 1985, Availability = "Available"}); 
-		movies.AddLast(new Movie() { Movie_ID = "M2", Title = "Star Wars", Director = "George Lucas", Genre = "Sci-Fi", Release_Year = 1977, Availability = "Available"}); 
-		movies.AddLast(new Movie() { Movie_ID = "M3", Title = "That Darn Cat!", Director = "Robert Stevenson", Genre = "Comedy", Release_Year = 1965, Availability = "Available"}); 
-		movies.AddLast(new Movie() { Movie_ID = "M4", Title = "The Final Countdown", Director = "Don Taylor", Genre = "Sci-Fi", Release_Year = 1980, Availability = "Available"}); 
+		AddMovie(new Movie() { Movie_ID = "M1", Title = "Back to the Future", Director = "Robert Zemeckis", Genre = "Sci-Fi", Release_Year = 1985, Availability = "Available"}); 
+		AddMovie(new Movie() { Movie_ID = "M2", Title = "Star Wars", Director = "George Lucas", Genre = "Sci-Fi", Release_Year = 1977, Availability = "Available"}); 
+		AddMovie(new Movie() { Movie_ID = "M3", Title = "That Darn Cat!", Director = "Robert Stevenson", Genre = "Comedy", Release_Year = 1965, Availability = "Available"}); 
+		AddMovie(new Movie() { Movie_ID = "M4", Title = "The Final Countdown", Director = "Don Taylor", Genre = "Sci-Fi", Release_Year = 1980, Availability = "Available"}); 
 	} 
+
+    public string AddMovie(Movie movie)
+    {
+        if (movieIDTable.ContainsKey(movie.Movie_ID)) 
+        return "DuplicateID"; 
+
+        if (movie.Release_Year < 1888 || movie.Release_Year > DateTime.Now.Year) 
+        return "InvalidYear"; 
+
+        movies.AddLast(movie); 
+        movieIDTable[movie.Movie_ID] = movie; 
+        return "Success"; 
+    }
 }
 
 
