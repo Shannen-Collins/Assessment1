@@ -4,7 +4,13 @@ using Assessment1.Services;
 
 namespace Assessment1.Tests;
 
-public class MoviServiceTests
+public class SmokeTests
 {
-    
+    [Fact]
+    public void TestFramework_IsWorking()
+    {
+        Assert.True(true);
+    }
 }
+
+
