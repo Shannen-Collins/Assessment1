@@ -136,5 +136,12 @@ public partial class MainWindow : Window
 		dtgMovies.ItemsSource = movieService.BubbleSortByTitle();
 	}
 
+	//when the Sort by Year button is clicked 
+	private void btnSortYear_Click(object sender, RoutedEventArgs e)
+	{
+		//run the movie service Merge Sort By Year function and fill the datagrid with the new sorted movie list 
+		dtgMovies.ItemsSource = movieService.MergeSortByYear();
+	}
+
 }
 
