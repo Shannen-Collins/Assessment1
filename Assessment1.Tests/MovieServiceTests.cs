@@ -190,4 +190,87 @@ public class AddMovieServiceTests
 
 }
 
+//Tests for the Sort Movie services
+public class SortMovieServiceTests
+{
+    //Makes sure the Bubble sort arranges the movies by title
+    [Fact] 
+    public void BubbleSortByTitle_Works() 
+    { 
+        var service = new MovieService(); 
+        service.AddMovie(new Movie
+         { 
+            Movie_ID = "M10",
+            Title = "B",
+            Director = "Me",
+            Genre = "Fantasy",
+            Release_Year = 2000,
+            Availability = "Available"
+        });
+        service.AddMovie(new Movie
+        { 
+            Movie_ID = "M11",
+            Title = "C",
+            Director = "Me",
+            Genre = "Fantasy",
+            Release_Year = 1995,
+            Availability = "Available"
+        });
+        service.AddMovie(new Movie
+        { 
+            Movie_ID = "M12",
+            Title = "A",
+            Director = "Me",
+            Genre = "Fantasy",
+            Release_Year = 2010,
+            Availability = "Available"
+        });
 
+        var sorted = service.BubbleSortByTitle().ToList();
+        Assert.Equal("A", sorted[0].Title);
+        Assert.Equal("B", sorted[1].Title);
+        Assert.Equal("C", sorted[2].Title);
+    }
+
+    //Makes sure the merge sort arrages the movies by year released 
+    [Fact] 
+    public void MergeSortByYear_Works() 
+    { 
+        var service = new MovieService(); 
+        service.AddMovie(new Movie
+         { 
+            Movie_ID = "M10",
+            Title = "B",
+            Director = "Me",
+            Genre = "Fantasy",
+            Release_Year = 2000,
+            Availability = "Available"
+        });
+        service.AddMovie(new Movie
+        { 
+            Movie_ID = "M11",
+            Title = "C",
+            Director = "Me",
+            Genre = "Fantasy",
+            Release_Year = 1995,
+            Availability = "Available"
+        });
+        service.AddMovie(new Movie
+        { 
+            Movie_ID = "M12",
+            Title = "A",
+            Director = "Me",
+            Genre = "Fantasy",
+            Release_Year = 2010,
+            Availability = "Available"
+        });
+
+        var sorted = service.MergeSortByYear().ToList();
+        Assert.Equal(1995, sorted[0].Release_Year);
+        Assert.Equal(2000, sorted[1].Release_Year);
+        Assert.Equal(2010, sorted[2].Release_Year);
+    }
+         
+      
+    
+}
