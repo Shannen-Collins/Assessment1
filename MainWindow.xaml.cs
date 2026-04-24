@@ -143,5 +143,12 @@ public partial class MainWindow : Window
 		dtgMovies.ItemsSource = movieService.MergeSortByYear();
 	}
 
+	//when the Search by Title button is clicked
+	private void btnSearchTitle_Click(object sender, RoutedEventArgs e)
+	{
+		//run the movie service Linear Search function and fill the datagrid with filtered search results from the search textbox
+		dtgMovies.ItemsSource = movieService.LinearSearchByTitle(txtSearch.Text);
+	}
+
 }
 

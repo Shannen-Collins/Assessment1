@@ -174,6 +174,28 @@ private LinkedList<Movie> MergeSort(LinkedList<Movie> list)
     }
 
 
+    //searches movie list and filters by title
+    public LinkedList<Movie> LinearSearchByTitle(string search)
+    {
+        //set the results as the new linked list
+        var results = new LinkedList<Movie>();
+        //if there is nothing in the search textbox, returns list
+        if (string.IsNullOrWhiteSpace(search)) 
+            return new LinkedList<Movie>(movies);
+        
+        //for each movie in list
+        foreach(var movie in movies)
+        {
+            //if it contain the search term
+            if (movie.Title.Contains(search, StringComparison.OrdinalIgnoreCase))
+            {
+                //add movie to the new list
+                results.AddLast(movie);
+            }
+        }     
+        //return the new filtered list
+        return results;  
+    }
 
 
 
