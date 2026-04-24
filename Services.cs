@@ -10,11 +10,11 @@ public class MovieService {
     //hashtable for fast lookup of Movie ID
     private Hashtable movieIDTable = new Hashtable();
 
-    public MovieService()
-    {
+    //public MovieService()
+    //{
         //shows sample data on datagrid
-        SampleData();
-    }
+      //  SampleData();
+   // }
 
     //Returns all movies stored in the collection for display in the UI
     public IEnumerable<Movie> GetAll() 
@@ -22,14 +22,14 @@ public class MovieService {
 		return movies; 
 	} 
 
-    private void SampleData()
-	{ 
+    //private void SampleData()
+	//{ 
         //Sample Movie data for UI testing
-		AddMovie(new Movie() { Movie_ID = "M1", Title = "Back to the Future", Director = "Robert Zemeckis", Genre = "Sci-Fi", Release_Year = 1985, Availability = "Available"}); 
-		AddMovie(new Movie() { Movie_ID = "M2", Title = "Star Wars", Director = "George Lucas", Genre = "Sci-Fi", Release_Year = 1977, Availability = "Available"}); 
-		AddMovie(new Movie() { Movie_ID = "M3", Title = "That Darn Cat!", Director = "Robert Stevenson", Genre = "Comedy", Release_Year = 1965, Availability = "Available"}); 
-		AddMovie(new Movie() { Movie_ID = "M4", Title = "The Final Countdown", Director = "Don Taylor", Genre = "Sci-Fi", Release_Year = 1980, Availability = "Available"}); 
-	} 
+	//	AddMovie(new Movie() { Movie_ID = "M1", Title = "Back to the Future", Director = "Robert Zemeckis", Genre = "Sci-Fi", Release_Year = 1985, Availability = "Available"}); 
+	//	AddMovie(new Movie() { Movie_ID = "M2", Title = "Star Wars", Director = "George Lucas", Genre = "Sci-Fi", Release_Year = 1977, Availability = "Available"}); 
+	//	AddMovie(new Movie() { Movie_ID = "M3", Title = "That Darn Cat!", Director = "Robert Stevenson", Genre = "Comedy", Release_Year = 1965, Availability = "Available"}); 
+	//	AddMovie(new Movie() { Movie_ID = "M4", Title = "The Final Countdown", Director = "Don Taylor", Genre = "Sci-Fi", Release_Year = 1980, Availability = "Available"}); 
+	//} 
 
     //runs Add Movie input checks 
     public string AddMovie(Movie movie)
