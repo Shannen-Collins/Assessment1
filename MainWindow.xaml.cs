@@ -31,6 +31,7 @@ public partial class MainWindow : Window
 		RefreshGrid();
     }
 
+	//function to refresh the datagrid
 	private void RefreshGrid()  
 	{  	
 		//empties datagrid 
@@ -39,6 +40,7 @@ public partial class MainWindow : Window
 		dtgMovies.ItemsSource = movieService.GetAll().ToList();  
 	} 
 
+	//function to clear inputs and hide Add Movie panel
 	private void ClearAddMovieInputs()
 	{
 		//makes the add movie panel disappear 
@@ -51,18 +53,21 @@ public partial class MainWindow : Window
 		txtYear.Text = ""; 
 	}
 
+	//when Add Movie button is clicked
 	private void btnAddMovie_Click(object sender, RoutedEventArgs e) 
 	{ 	
 		//makes the add movie panel disappear 
 		addPanel.Visibility = Visibility.Visible; 
 	} 
 
+	//when Add Movie panel's Back button is clicked
 	private void btnAddBack_Click(object sender, RoutedEventArgs e) 
 	{ 
 		//runs clear add movie inputs method
 		ClearAddMovieInputs();
 	} 
 
+	//when Add Movie panel's Save button is clicked
 	private void btnAddSave_Click(object sender, RoutedEventArgs e)
 	{ 
 		//if the textboxes are empty, display message
@@ -122,6 +127,13 @@ public partial class MainWindow : Window
 		RefreshGrid();
 		//runs clear add movie inputs method
 		ClearAddMovieInputs();
+	}
+
+	//when the Sort by Title button is clicked 
+	private void btnSortTitle_Click(object sender, RoutedEventArgs e)
+	{
+		//run the movie service Bubble Sort By Title function and fill the datagrid with the new sorted movie list 
+		dtgMovies.ItemsSource = movieService.BubbleSortByTitle();
 	}
 
 }
