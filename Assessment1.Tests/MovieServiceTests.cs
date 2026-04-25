@@ -270,7 +270,95 @@ public class SortMovieServiceTests
         Assert.Equal(2000, sorted[1].Release_Year);
         Assert.Equal(2010, sorted[2].Release_Year);
     }
-         
-      
+}
+
+public class SearchMovieServiceTests
+{
+    private MovieService SearchServiceMovies()
+    {
+        var service = new MovieService(); 
+        service.AddMovie(new Movie
+        {
+            Movie_ID = "M13",
+            Title = "Back to the Future",
+            Director = "Robert Zemeckis",
+            Genre = "Sci-Fi",
+            Release_Year = 1985,
+            Availability = "Available"
+        });
+        service.AddMovie(new Movie
+        { 
+            Movie_ID = "M14",
+            Title = "Star Wars",
+            Director = "George Lucas",
+            Genre = "Sci-Fi",
+            Release_Year = 1977,
+            Availability = "Available"
+        });
+        service.AddMovie(new Movie
+        { 
+            Movie_ID = "M15",
+            Title = "That Darn Cat!",
+            Director = "Robert Stevenson",
+            Genre = "Comedy",
+            Release_Year = 1965,
+            Availability = "Available"
+        });
+
+        return service;
+        
+    }
+    [Fact]
+    public void LinearSearchByTitle_Works()
+    {
+        var service = SearchServiceMovies();
+        var result = service.LinearSearchByTitle("Back");
+        Assert.Single(result);
+        Assert.Equal("M13", result.First!.Value.Movie_ID);
+    }
+
+    [Fact]
+    public void LinearSearchByTitle_Works_NotCaseSensitive()
+    {
+        var service = SearchServiceMovies();
+        var result = service.LinearSearchByTitle("star");
+        Assert.Single(result);
+        Assert.Equal("M14", result.First!.Value.Movie_ID);
+    }
+
+    [Fact]
+    public void LinearSearchByTitle_NoResultsFound()
+    {
+        var service = SearchServiceMovies();
+        var result = service.LinearSearchByTitle("Fake Movie");
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void BinarySearchBID_Works()
+    {
+        var service = SearchServiceMovies();
+        var result = service.BinarySearchByID("M13");
+        Assert.Single(result);
+        Assert.Equal("M13", result.First!.Value.Movie_ID);
+    }
+
+    [Fact]
+    public void BinarySearchBID_NotFound_ReturnsEmpty()
+    {
+        var service = SearchServiceMovies();
+        var result = service.BinarySearchByID("M80");
+        Assert.Empty(result);
+    }
+
+     [Fact]
+    public void BinarySearchBID_Works_NotCaseSensitive()
+    {
+        var service = SearchServiceMovies();
+        var result = service.BinarySearchByID("m13");
+        Assert.Single(result);
+        Assert.Equal("M13", result.First!.Value.Movie_ID);
+    }
+
     
 }

@@ -42,18 +42,27 @@ public class MovieService {
         if (movie.Release_Year < 1888 || movie.Release_Year > DateTime.Now.Year) 
         return "InvalidYear"; 
 
+        //Sorts added movie by ID
+        //if there are no movies in list
         if (movies.Count == 0)
-        {
+        {   
+            //add new movie to first node of list
             movies.AddFirst(movie);
         }
+        //if list has movies already
         else
         {
+            //set current as first node of movie list
             var current = movies.First;
+            //go through list until added movie ID is bigger than the current movie ID on list
             while (current != null && string.Compare(current.Value.Movie_ID, movie.Movie_ID, StringComparison.OrdinalIgnoreCase) < 0)
             {
+                //go to the next node
                 current = current.Next;
             }
+            //if ID is bigger than IDs in movie list, add movie to end of list
             if (current == null) movies.AddLast(movie);
+            //if node bigger than new ID is found, add movie before that node
             else movies.AddBefore(current, movie);
         }
 
