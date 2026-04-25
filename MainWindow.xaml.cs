@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -143,28 +144,40 @@ public partial class MainWindow : Window
 		dtgMovies.ItemsSource = movieService.MergeSortByYear();
 	}
 
-	//when the Search by Title button is clicked
-	private void btnSearchTitle_Click(object sender, RoutedEventArgs e)
+	//function to check movie list and search textbox are not empty
+	private bool SearchPreCheckSuccess()
 	{
-		//if movie list is empty display message
+		//if movie list is empty, display message and declare pre-check success is false
 		if (!movieService.GetAll().Any())
 		{
 			MessageBox.Show("Please add a movie to the list before searching");
-			return;
+			return false;
 		}
 
-		//if nothing is entered into the search textbox, display message
+		//if nothing is entered into the search textbox, display message and declare pre-check success is false
 		if (string.IsNullOrWhiteSpace(txtSearch.Text))
 			{ 
-				MessageBox.Show("Please enter in a movie title to search the movie list"); 
-				return; 
+				MessageBox.Show("Please enter information into the search field before searching"); 
+				return false; 
 			} 
+		//else, return pre-check success is true
+		return true; 
+	}
 
+	//when the Search by Title button is clicked
+	private void btnSearchTitle_Click(object sender, RoutedEventArgs e)
+	{
+		//runs Search pre-check function, if it fails then stop search
+		if (SearchPreCheckSuccess() == false)
+		{
+			return;
+		}
+	
 		//defines search results
 		var results = movieService.LinearSearchByTitle(txtSearch.Text);
 
-		//if there are no movies matching the search filter input, display message
-		if (!results.Any())
+		//if there are no movies matching the search filter input, display message and clear datagrid
+		if (results.Count == 0)
 		{
 			dtgMovies.ItemsSource = null;
 			MessageBox.Show("No results found");
@@ -172,6 +185,30 @@ public partial class MainWindow : Window
 		}
 
 		//run the movie service Linear Search function and fill the datagrid with filtered search results from the search textbox
+		dtgMovies.ItemsSource = results;
+	}
+
+	//when the Search by ID button is clicked
+	public void btnSearchID_Click(object sender, RoutedEventArgs e)
+	{
+		//runs Search pre-check function, if it fails then stop search
+		if (SearchPreCheckSuccess() == false)
+		{
+			return;
+		}
+
+		//defines search results
+		var results = movieService.BinarySearchByID(txtSearch.Text);
+
+		//if there are no movies matching the search filter input, display message and clear datagrid
+		if (results.Count == 0)
+		{
+			dtgMovies.ItemsSource = null;
+			MessageBox.Show("No results found");
+			return;
+		}
+
+		//run the movie service Binary Search function and fill the datagrid with filtered search results from the search textbox
 		dtgMovies.ItemsSource = results;
 	}
 

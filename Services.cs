@@ -42,8 +42,21 @@ public class MovieService {
         if (movie.Release_Year < 1888 || movie.Release_Year > DateTime.Now.Year) 
         return "InvalidYear"; 
 
-        //add new movie to movie list
-        movies.AddLast(movie); 
+        if (movies.Count == 0)
+        {
+            movies.AddFirst(movie);
+        }
+        else
+        {
+            var current = movies.First;
+            while (current != null && string.Compare(current.Value.Movie_ID, movie.Movie_ID, StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                current = current.Next;
+            }
+            if (current == null) movies.AddLast(movie);
+            else movies.AddBefore(current, movie);
+        }
+
         //add Movie ID to hashtable
         movieIDTable[movie.Movie_ID] = movie; 
         //return success to indicate the add movie worked
@@ -174,7 +187,7 @@ public class MovieService {
     }
 
 
-    //searches movie list and filters by title
+    //searches movie list using linear search and filters by title
     public LinkedList<Movie> LinearSearchByTitle(string search)
     {
         //set the results as the new linked list
@@ -192,6 +205,74 @@ public class MovieService {
         }     
         //return the new filtered list
         return results;  
+    }
+
+    //takes the results from the binary ID search and puts into new linked list
+    public LinkedList<Movie> BinarySearchByID(string targetID)
+    {
+        //set results as the new empty linked list
+        var results = new LinkedList<Movie>();
+        //set the found ID as the result from the binary search function
+        var found = BinarySearch(targetID);
+        //if movie ID is found (not null), add movie to the new list
+        if (found != null) results.AddLast(found);
+        //return the new filtered list
+        return results;
+    }
+
+    //main Binary Search function to search for movie ID
+    private Movie? BinarySearch(string targetID)
+    {
+        //set start as the first node in linked list
+        var start = movies.First;
+        //set end stop point as end of list
+        LinkedListNode<Movie>? end = null;
+
+        //while start is not null or at the end, loop through list
+        while (start != null && start != end)
+        {
+            //set the middle to the Get Middle function results, to allow binary search on linked list (as part of requirements)
+            var mid = GetMiddle(start, end);
+
+            //compare the middle ID value with the target ID value and set it as an integer
+            int comparison = string.Compare(mid.Value.Movie_ID, targetID, StringComparison.OrdinalIgnoreCase);
+
+            //if the comparison integer is 0 or the middle
+            if (comparison == 0)
+                //then the target ID is found, and returns the ID value
+                return mid.Value;
+            //if the target ID is after the middle 
+            else if (comparison < 0)
+                //set the middle as the new start and search everything to the right of the old middle
+                start = mid.Next;
+            //else, then the target ID is before the middle
+            else
+                //move end to middle and search the everything to the left of the old middle
+                end = mid;
+        }
+        //return null if ID target not found
+        return null;
+    }
+
+    //finds middle node using slow/fast poiter technique (required for binary search on linked list)
+    private LinkedListNode<Movie> GetMiddle(
+        LinkedListNode<Movie> start, 
+        LinkedListNode<Movie>? end)
+    {
+        //sets slow and fast variables
+        var slow = start; //moves 1 node at a time
+        var fast = start; //moves 2 nodes at a time
+
+        //while fast is not and the end or next fast node is not null
+        while (fast != end && fast !=null && fast.Next != end)
+        {
+            //set the fast as the value next to the next node (every 2 nodes)
+            fast = fast.Next?.Next;
+            //set the slow as the next value (every 1 node)
+            slow = slow.Next!;
+        }
+        //return the slow node value 
+        return slow;
     }
 
 
