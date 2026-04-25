@@ -146,8 +146,33 @@ public partial class MainWindow : Window
 	//when the Search by Title button is clicked
 	private void btnSearchTitle_Click(object sender, RoutedEventArgs e)
 	{
+		//if movie list is empty display message
+		if (!movieService.GetAll().Any())
+		{
+			MessageBox.Show("Please add a movie to the list before searching");
+			return;
+		}
+
+		//if nothing is entered into the search textbox, display message
+		if (string.IsNullOrWhiteSpace(txtSearch.Text))
+			{ 
+				MessageBox.Show("Please enter in a movie title to search the movie list"); 
+				return; 
+			} 
+
+		//defines search results
+		var results = movieService.LinearSearchByTitle(txtSearch.Text);
+
+		//if there are no movies matching the search filter input, display message
+		if (!results.Any())
+		{
+			dtgMovies.ItemsSource = null;
+			MessageBox.Show("No results found");
+			return;
+		}
+
 		//run the movie service Linear Search function and fill the datagrid with filtered search results from the search textbox
-		dtgMovies.ItemsSource = movieService.LinearSearchByTitle(txtSearch.Text);
+		dtgMovies.ItemsSource = results;
 	}
 
 }

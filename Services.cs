@@ -97,39 +97,39 @@ public class MovieService {
         return MergeSort(list);
     }
 
-//recursive method that splits the list into halves
-private LinkedList<Movie> MergeSort(LinkedList<Movie> list)
-{
-    //if there is less than 2 movies in the list, no sorting is needed
-    if (list.Count < 2) return list;
-
-    //defines the middle of the list by spliting the list in half
-    var middle = list.Count / 2;
-
-    //creates new lists for each half
-    var left = new LinkedList<Movie>();
-    var right = new LinkedList<Movie>();
-
-    //for each movie in the list
-    //add it to either the left or right depending on if it is higher or lower than the middle
-    int index = 0;
-    foreach (var movie in list)
+    //recursive method that splits the list into halves
+    private LinkedList<Movie> MergeSort(LinkedList<Movie> list)
     {
-        if (index < middle)
-            left.AddLast(movie);
-        else
-            right.AddLast(movie);
+        //if there is less than 2 movies in the list, no sorting is needed
+        if (list.Count < 2) return list;
 
-        index++;
+        //defines the middle of the list by spliting the list in half
+        var middle = list.Count / 2;
+
+        //creates new lists for each half
+        var left = new LinkedList<Movie>();
+        var right = new LinkedList<Movie>();
+
+        //for each movie in the list
+        //add it to either the left or right depending on if it is higher or lower than the middle
+        int index = 0;
+        foreach (var movie in list)
+        {
+            if (index < middle)
+                left.AddLast(movie);
+            else
+                right.AddLast(movie);
+
+            index++;
+        }
+
+        //for each of the halves, run the merge sort function again
+        left = MergeSort(left);
+        right = MergeSort(right);
+
+        //merge the sorted halves
+        return Merge(left, right);
     }
-
-    //for each of the halves, run the merge sort function again
-    left = MergeSort(left);
-    right = MergeSort(right);
-
-    //merge the sorted halves
-    return Merge(left, right);
-}
 
     //merges two sorted linked lists into one sorted list
     private LinkedList<Movie> Merge(LinkedList<Movie> left, LinkedList<Movie> right)
@@ -179,9 +179,6 @@ private LinkedList<Movie> MergeSort(LinkedList<Movie> list)
     {
         //set the results as the new linked list
         var results = new LinkedList<Movie>();
-        //if there is nothing in the search textbox, returns list
-        if (string.IsNullOrWhiteSpace(search)) 
-            return new LinkedList<Movie>(movies);
         
         //for each movie in list
         foreach(var movie in movies)
