@@ -170,6 +170,7 @@ public partial class MainWindow : Window
 		//runs Search pre-check function, if it fails then stop search
 		if (SearchPreCheckSuccess() == false)
 		{
+			ClearSearchInput();
 			return;
 		}
 	
@@ -181,19 +182,22 @@ public partial class MainWindow : Window
 		{
 			dtgMovies.ItemsSource = null;
 			MessageBox.Show("No results found");
+			ClearSearchInput();
 			return;
 		}
 
 		//run the movie service Linear Search function and fill the datagrid with filtered search results from the search textbox
 		dtgMovies.ItemsSource = results;
+		ClearSearchInput();
 	}
 
 	//when the Search by ID button is clicked
-	public void btnSearchID_Click(object sender, RoutedEventArgs e)
+	private void btnSearchID_Click(object sender, RoutedEventArgs e)
 	{
 		//runs Search pre-check function, if it fails then stop search
 		if (SearchPreCheckSuccess() == false)
 		{
+			ClearSearchInput();
 			return;
 		}
 
@@ -205,11 +209,31 @@ public partial class MainWindow : Window
 		{
 			dtgMovies.ItemsSource = null;
 			MessageBox.Show("No results found");
+			ClearSearchInput();
 			return;
 		}
 
 		//run the movie service Binary Search function and fill the datagrid with filtered search results from the search textbox
 		dtgMovies.ItemsSource = results;
+		ClearSearchInput();
+	}
+
+	//clears the search textbox
+	private void ClearSearchInput()
+	{
+		//if the search textbox is not empty
+		if(!string.IsNullOrWhiteSpace(txtSearch.Text))
+		{
+			//clear text from searh textbox
+			txtSearch.Text= "";
+		}
+	}
+
+	//when Show All button is clicked
+	private void btnShowAll_Click(object sender, RoutedEventArgs e)
+	{
+		//run refresh grid function
+		RefreshGrid();
 	}
 
 }
