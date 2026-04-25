@@ -1,5 +1,9 @@
 using System.Collections;
 using Assessment1.Model;
+using System.Text.Json;
+using System.Xml.Serialization;
+using System.IO;
+using System.Linq;
 
 namespace Assessment1.Services;
 
@@ -10,26 +14,11 @@ public class MovieService {
     //hashtable for fast lookup of Movie ID
     private Hashtable movieIDTable = new Hashtable();
 
-    //public MovieService()
-    //{
-        //shows sample data on datagrid
-      //  SampleData();
-   // }
-
     //Returns all movies stored in the collection for display in the UI
     public IEnumerable<Movie> GetAll() 
 	{ 
 		return movies; 
 	} 
-
-   // private void SampleData()
-	//{ 
-        //Sample Movie data for UI testing
-    //	AddMovie(new Movie() { Movie_ID = "M1", Title = "Back to the Future", Director = "Robert Zemeckis", Genre = "Sci-Fi", Release_Year = 1985, Availability = "Available"}); 
-	//	AddMovie(new Movie() { Movie_ID = "M2", Title = "Star Wars", Director = "George Lucas", Genre = "Sci-Fi", Release_Year = 1977, Availability = "Available"}); 
-	//	AddMovie(new Movie() { Movie_ID = "M3", Title = "That Darn Cat!", Director = "Robert Stevenson", Genre = "Comedy", Release_Year = 1965, Availability = "Available"}); 
-	//	AddMovie(new Movie() { Movie_ID = "M4", Title = "The Final Countdown", Director = "Don Taylor", Genre = "Sci-Fi", Release_Year = 1980, Availability = "Available"}); 
-	//} 
 
     //runs Add Movie input checks 
     public string AddMovie(Movie movie)
@@ -43,28 +32,7 @@ public class MovieService {
         return "InvalidYear"; 
 
         //Sorts added movie by ID
-        //if there are no movies in list
-        if (movies.Count == 0)
-        {   
-            //add new movie to first node of list
-            movies.AddFirst(movie);
-        }
-        //if list has movies already
-        else
-        {
-            //set current as first node of movie list
-            var current = movies.First;
-            //go through list until added movie ID is bigger than the current movie ID on list
-            while (current != null && string.Compare(current.Value.Movie_ID, movie.Movie_ID, StringComparison.OrdinalIgnoreCase) < 0)
-            {
-                //go to the next node
-                current = current.Next;
-            }
-            //if ID is bigger than IDs in movie list, add movie to end of list
-            if (current == null) movies.AddLast(movie);
-            //if node bigger than new ID is found, add movie before that node
-            else movies.AddBefore(current, movie);
-        }
+        InsertMovieSorted(movie);
 
         //add Movie ID to hashtable
         movieIDTable[movie.Movie_ID] = movie; 
@@ -284,7 +252,86 @@ public class MovieService {
         return slow;
     }
 
+    //exports movie list to json file
+    public void ExportToJson(string filePath)
+    {
+        //converts movie linked list to list, json works better with list than linked list
+        var list = movies.ToList();
 
+        //converts movie list to json string
+        var json = JsonSerializer.Serialize(list, new JsonSerializerOptions
+        {
+            //formats json
+            WriteIndented = true
+        });
+
+        //writes json string into file 
+        File.WriteAllText(filePath, json);
+    }
+
+    //imports movie list from json file
+    public void ImportFromJson(string filePath)
+    {
+        //if file doesn't exist, don't import
+        if (!File.Exists(filePath))
+            return;
+
+        //reads json file
+        var json = File.ReadAllText(filePath);
+
+        //converts json string file to list
+        var list = JsonSerializer.Deserialize<List<Movie>>(json);
+
+        //if file is empty or invalid, stop
+        if (list == null || list.Count == 0) return;
+
+        //runs rebuild collection function
+        RebuildMovieCollection(list);
+    }
+
+    //rebuilds linked list and hashtable from imported data
+    private void RebuildMovieCollection(List<Movie> list)
+    {
+        //removes all current movies in collection
+        movies.Clear();
+        //resets lookup table
+        movieIDTable.Clear();
+
+        //for each movie in the imported list
+       foreach (var movie in list)
+        {
+            InsertMovieSorted(movie);
+            //add Movie ID to table
+            movieIDTable[movie.Movie_ID] = movie;
+        }
+    }
+    
+    //function that ensures stored movie list is sorted by ID for binary search
+    private void InsertMovieSorted(Movie movie)
+    {
+       //if there are no movies in list
+        if (movies.Count == 0)
+        {   
+            //add new movie to first node of list
+            movies.AddFirst(movie);
+        }
+        //if list has movies already
+        else
+        {
+            //set current as first node of movie list
+            var current = movies.First;
+            //go through list until added movie ID is bigger than the current movie ID on list
+            while (current != null && string.Compare(current.Value.Movie_ID, movie.Movie_ID, StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                //go to the next node
+                current = current.Next;
+            }
+            //if ID is bigger than IDs in movie list, add movie to end of list
+            if (current == null) movies.AddLast(movie);
+            //if node bigger than new ID is found, add movie before that node
+            else movies.AddBefore(current, movie);
+        }
+    }
 
 }
 

@@ -106,7 +106,7 @@ public partial class MainWindow : Window
 		//if input Movie ID already exists in movie list, display message
 		if (result == "DuplicateID")
 		{
-			MessageBox.Show("This Movie ID alreadt exists, please chose another");
+			MessageBox.Show("This Movie ID already exists, please chose another");
 			return;
 		}
 
@@ -195,7 +195,7 @@ public partial class MainWindow : Window
 	private void btnSearchID_Click(object sender, RoutedEventArgs e)
 	{
 		//runs Search pre-check function, if it fails then stop search
-		if (SearchPreCheckSuccess() == false)
+		if (!SearchPreCheckSuccess())
 		{
 			ClearSearchInput();
 			return;
@@ -234,6 +234,52 @@ public partial class MainWindow : Window
 	{
 		//run refresh grid function
 		RefreshGrid();
+	}
+
+
+	private void btnImport_Click(object sender, RoutedEventArgs e)
+	{
+		try
+		{
+			var dialog = new Microsoft.Win32.OpenFileDialog
+			{
+				Filter = "JSON Files (*.json)|*.json"
+			};
+
+			if (dialog.ShowDialog() == true)
+			{
+				movieService.ImportFromJson(dialog.FileName);
+				RefreshGrid();
+				MessageBox.Show("Movies imported successfully!");
+			}
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show("Import failed: " + ex.Message);
+		}
+	}
+		
+	
+
+	private void btnExport_Click(object sender, RoutedEventArgs e)
+	{
+		try
+		{
+			var dialog = new Microsoft.Win32.SaveFileDialog
+			{
+				Filter = "JSON Files (*.json)|*.json",
+				FileName = "movies.json"
+			};
+			if (dialog.ShowDialog() == true)
+			{
+				movieService.ExportToJson(dialog.FileName);
+				MessageBox.Show("Movies exported successfully!");
+			}
+		}
+		catch (Exception ex)
+		{
+			MessageBox.Show("Export failed: " + ex.Message);
+		}
 	}
 
 }
