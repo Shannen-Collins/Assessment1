@@ -100,19 +100,21 @@
             <Border CornerRadius="10" Background="#d9effa" Width="600" HorizontalAlignment="Center" VerticalAlignment="Center"> 
                 <StackPanel Margin="20"> 
                     <Label Content="Borrow Movie Details" FontWeight="Bold" FontSize="20" Margin="10,10,10,15"/> 
-                    <Label x:Name="lblBorrowMovieIDHeader" Content="Movie ID:" FontWeight="Bold"/> 
+                    <Label Content="Movie ID:" FontWeight="Bold"/> 
                     <Label x:Name="lblBorrowMovieID" Content="" /> 
-                    <Label x:Name="lblBorrowMovieTitleHeader" Content="Movie Title:" FontWeight="Bold"/> 
+                    <Label Content="Movie Title:" FontWeight="Bold"/> 
                     <Label x:Name="lblBorrowMovieTitle" Content="" /> 
+                    <Label Content="Availability:" FontWeight="Bold"/>
+                    <Label x:Name="lblBorrowMovieAvailability" Content=""/>
+                    <Label x:Name="lblBorrowedMessage" Visibility="Collapsed" Content="When borrowing this movie, you will be added to the waiting queue."/>
                     
                     <Label Content="Please enter in your username to Borrow a Movie" FontWeight="Bold" FontSize="20" Margin="10,10,10,10"/> 
                     <Label Content="Username: " />
                     <TextBox x:Name="txtUsername"/> 
-                    <CheckBox x:Name="chxUser" Content="I am an existing user" IsChecked="false" HorizontalAlignment="Center" />
         
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10, 40, 10, 20"> 
                         <Button Content="Back" Click="btnBorrowBack_Click" Margin="10"/> 
-                        <Button Content="Save" Margin="10"/> 
+                        <Button Content="Save" Margin="10" Click="btnBorrowSave_Click"/> 
                     </StackPanel>
                 </StackPanel> 
             </Border>

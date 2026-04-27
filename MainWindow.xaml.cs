@@ -23,6 +23,8 @@ public partial class MainWindow : Window
 {
 	//service layer object for managing movies
 	private MovieService movieService;
+
+	private Movie? selectedMovie;
     public MainWindow()
     {
 		//links code to XAML file
@@ -238,31 +240,41 @@ public partial class MainWindow : Window
 	}
 
 
+	//when import button is clicked
 	private void btnImport_Click(object sender, RoutedEventArgs e)
 	{
+		//starts error handling
 		try
 		{
+			//creates file picker window 
 			var dialog = new Microsoft.Win32.OpenFileDialog
 			{
+				//JSON file option only
 				Filter = "JSON Files (*.json)|*.json"
 			};
 
+			//checks user selected file and clicked open
 			if (dialog.ShowDialog() == true)
 			{
+				//runs import service to load movies into system
 				movieService.ImportFromJson(dialog.FileName);
+				//run refresh grid function
 				RefreshGrid();
+				//Shows success message
 				MessageBox.Show("Movies imported successfully!");
 			}
 		}
+		//file error handling
 		catch (IOException ex)
 		{
    		 MessageBox.Show("File error: " + ex.Message);
 		}
-
+		//permission error handling
 		catch (UnauthorizedAccessException ex)
 		{
    		MessageBox.Show("You do not have permission to access this file. " + ex.Message);
 		}
+		//any other exception error handling
 		catch (Exception ex)
 		{
 			MessageBox.Show("Import failed: " + ex.Message);
@@ -270,66 +282,134 @@ public partial class MainWindow : Window
 	}
 		
 	
-
+	//when export button is clicked
 	private void btnExport_Click(object sender, RoutedEventArgs e)
 	{
+		//starts error handling
 		try
 		{
+			//Opens Save as dialog to choose file location
 			var dialog = new Microsoft.Win32.SaveFileDialog
 			{
 				Filter = "JSON Files (*.json)|*.json",
 				FileName = "movies.json"
 			};
+			//checks user selected file and clicked open
 			if (dialog.ShowDialog() == true)
 			{
+				//runs export service to convert to JSON and save it
 				movieService.ExportToJson(dialog.FileName);
 				MessageBox.Show("Movies exported successfully!");
 			}
 		}
+		//file error handling
 		catch (IOException ex)
 		{
    		 MessageBox.Show("File error: " + ex.Message);
 		}
-
+		//permission error handling
 		catch (UnauthorizedAccessException ex)
 		{
    		MessageBox.Show("You do not have permission to access this file. " + ex.Message);
 		}
-
+		//any other exception error handling
 		catch (Exception ex)
 		{
 			MessageBox.Show("Export failed: " + ex.Message);
 		}
 	}
 
+	//when borrow button is clicked
 	private void btnBorrow_Click (object sender, RoutedEventArgs e)
 	{
-		var selectedMovie = dtgMovies.SelectedItem as Movie;
+		//gets movie from selected movie in datagrid
+		selectedMovie = dtgMovies.SelectedItem as Movie;
+
+		//is no movie is selected, displays message
 		if(selectedMovie == null)
 		{
 			MessageBox.Show("Please select a movie to borrow");
 			return;
 		}
-
+		//changes content in Borrow Panel to selected movie details
 		lblBorrowMovieID.Content = selectedMovie.Movie_ID;
     	lblBorrowMovieTitle.Content = selectedMovie.Title;
-
+		lblBorrowMovieAvailability.Content = selectedMovie.Availability;
+		
+		//if movie is already borrowed
+		if (selectedMovie.Availability == "Borrowed")
+		{
+			//mage borrowed message visible
+			lblBorrowedMessage.Visibility = Visibility.Visible;
+		}
+		
+		//make borrow panel visible
 		borrowPanel.Visibility = Visibility.Visible; 
 	}
 
+	//when borrow back button is clicked
 	private void btnBorrowBack_Click (object sender, RoutedEventArgs e)
 	{
+		//run clear borrow panel function
 		ClearBorrowPanel();
 	}
 
+	//function for clearing details in borrow panel
 	private void ClearBorrowPanel()
 	{
+		//removes selected item
+		dtgMovies.SelectedItem = null;
 		dtgMovies.UnselectAll();
+		//clears borrow movie details content 
 		lblBorrowMovieID.Content = "";
     	lblBorrowMovieTitle.Content = "";
+		lblBorrowMovieAvailability.Content = "";
+		//makes borrowed message not visible
+		lblBorrowedMessage.Visibility = Visibility.Collapsed;
+		//clears inputed username details
 		txtUsername.Text = "";
-		chxUser.IsChecked = false;
+		//makes borrow panel not visible
 		borrowPanel.Visibility = Visibility.Collapsed; 
+	}
+
+	//when borrow save button is clicked
+	public void btnBorrowSave_Click (object sender, RoutedEventArgs e)
+	{
+		//if no movie is selected, display message and stop
+		if (selectedMovie == null)
+		{
+			MessageBox.Show("No movie selected");
+			return;
+		}
+		//if nothing is entered in username textbox, display message and stop
+		if (string.IsNullOrWhiteSpace(txtUsername.Text))
+		{
+			MessageBox.Show("Please enter a username");
+			return;
+		}
+
+		//run borrowed service and set result to Movie ID of Borrowed movie and inputted username
+		string result = movieService.BorrowMovie(
+			selectedMovie.Movie_ID,
+			txtUsername.Text
+		);
+
+		//if movie has been borrowed
+		if (result == "Borrowed")
+		{
+			//display success message
+			MessageBox.Show("Movie borrowed successfully");
+		}
+		//if movie has been queued, display message
+		else if (result == "Queued")
+		{
+			MessageBox.Show("You have been added to the waiting queue");
+		}
+
+		//run refresh grid function
+		RefreshGrid();
+		//run clear borrow panel function
+		ClearBorrowPanel();
 	}
 
 }
