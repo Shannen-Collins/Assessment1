@@ -302,5 +302,35 @@ public partial class MainWindow : Window
 		}
 	}
 
+	private void btnBorrow_Click (object sender, RoutedEventArgs e)
+	{
+		var selectedMovie = dtgMovies.SelectedItem as Movie;
+		if(selectedMovie == null)
+		{
+			MessageBox.Show("Please select a movie to borrow");
+			return;
+		}
+
+		lblBorrowMovieID.Content = selectedMovie.Movie_ID;
+    	lblBorrowMovieTitle.Content = selectedMovie.Title;
+
+		borrowPanel.Visibility = Visibility.Visible; 
+	}
+
+	private void btnBorrowBack_Click (object sender, RoutedEventArgs e)
+	{
+		ClearBorrowPanel();
+	}
+
+	private void ClearBorrowPanel()
+	{
+		dtgMovies.UnselectAll();
+		lblBorrowMovieID.Content = "";
+    	lblBorrowMovieTitle.Content = "";
+		txtUsername.Text = "";
+		chxUser.IsChecked = false;
+		borrowPanel.Visibility = Visibility.Collapsed; 
+	}
+
 }
 
