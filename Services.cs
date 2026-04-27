@@ -13,7 +13,7 @@ public class MovieService {
 	private LinkedList<Movie> movies = new LinkedList<Movie>(); 
     //hashtable for fast lookup of Movie ID
     private Hashtable movieIDTable = new Hashtable();
-    //queue for waiting list details
+    //queue to manage waiting list for borrowing movies
     private Dictionary<string, Queue<string>> waitingQueue = new();
 
     //Returns all movies stored in the collection for display in the UI
@@ -364,6 +364,35 @@ public class MovieService {
         waitingQueue[movieID].Enqueue(username);
         //return queued status
         return "Queued";
+    }
+
+    //function for returning movies
+    public string ReturnMovie(string movieID)
+    {
+        //looks up movie ID in hashtable and converts result into Movie object
+        var movie = movieIDTable[movieID] as Movie;
+        
+        //if ID is not there, returns Not Found
+        if (movie == null)
+            return "NotFound";
+
+        //if a waiting queue for the Movie ID doesn't exist or is empty
+        if (!waitingQueue.ContainsKey(movieID) || waitingQueue[movieID].Count == 0)
+        {
+            //make movie available and mark it as Returned
+            movie.Availability = "Available";
+            return "Returned";
+        }
+
+        //gives movie to next user
+        var nextUser = waitingQueue[movieID].Dequeue();
+
+        //marks movie as borrowed again
+        movie.Availability = "Borrowed";
+
+        //returns notification information for next user
+        return $"Assigned to: {nextUser}";
+
     }
 
 }

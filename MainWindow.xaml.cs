@@ -388,16 +388,15 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		//run borrowed service and set result to Movie ID of Borrowed movie and inputted username
+		//run borrow movie service and set result to Movie ID of Borrowed movie and inputted username
 		string result = movieService.BorrowMovie(
 			selectedMovie.Movie_ID,
 			txtUsername.Text
 		);
 
-		//if movie has been borrowed
+		//if movie has been borrowed successfully, display message
 		if (result == "Borrowed")
 		{
-			//display success message
 			MessageBox.Show("Movie borrowed successfully");
 		}
 		//if movie has been queued, display message
@@ -410,6 +409,52 @@ public partial class MainWindow : Window
 		RefreshGrid();
 		//run clear borrow panel function
 		ClearBorrowPanel();
+	}
+
+	//when return button is clicked
+	public void btnReturn_Click(object sender, RoutedEventArgs e)
+	{
+		//gets movie from selected movie in datagrid
+		selectedMovie = dtgMovies.SelectedItem as Movie;
+
+		//if no movie is selected, displays message
+		if(selectedMovie == null)
+		{
+			MessageBox.Show("Please select a movie to return");
+			return;
+		}
+
+		//if movie is availble, it can't be returned, displays message
+		if (selectedMovie.Availability == "Available")
+		{
+			MessageBox.Show("This movie has not been borrowed, so it can't be returned.");
+			return;
+		}
+
+		//run return movie service and set result to Movie ID of selected movie
+		var result = movieService.ReturnMovie(selectedMovie.Movie_ID);
+
+		//if movie is not found, display message
+		if (result == "NotFound")
+		{
+			MessageBox.Show("Movie not found");
+		}
+
+		//if movie has been returned successfully, display message
+		else if (result == "Returned")
+		{
+			MessageBox.Show("Movie returned successfully");
+		}
+		//if there is a user in a waiting queue for returned movie
+		else if (result.StartsWith("Assigned to"))
+		{
+			//get the username from the returned result
+			string user = result.Split(':')[1];
+			//display message notifying next user
+			MessageBox.Show($"Movie assigned to next user in the queue: {user}");
+		}
+		//run refresh grid function
+		RefreshGrid();
 	}
 
 }
