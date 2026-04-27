@@ -1,10 +1,11 @@
 ﻿using Xunit;
 using Assessment1.Model;
 using Assessment1.Services;
+using System.Text.Json;
 
 namespace Assessment1.Tests;
 
-//Test to see if xUnit tests are working
+//Test to see if xUnit tests are set up and running correctly
 public class SmokeTests
 {
     [Fact]
@@ -17,16 +18,16 @@ public class SmokeTests
 //Tests for the Add Movie services
 public class AddMovieServiceTests
 {
-    //Test to see if movie list starts empty
+    //Verifies movie list starts empty
     [Fact] 
-    public void GetAll_StartEmpty_ReturnsNoMovies() 
+    public void GetAll_StartsEmpty_ReturnsNoMovies() 
     { 
         var service = new MovieService(); 
         var result = service.GetAll(); 
         Assert.Empty(result); 
     } 
 
-    //Tests if movie can be added to movie list
+    //Verifies that a valid movie can be added to movie list using the Add Movie service function
     [Fact] 
     public void AddMovie_ValidMovie_ReturnsSuccess() 
     { 
@@ -45,7 +46,7 @@ public class AddMovieServiceTests
         Assert.Single(service.GetAll());
     }
 
-    //Tests that service will return duplicate ID if IDs are the same
+    //Verifies that service will return "DuplicateID" if IDs are the same
     [Fact]
     public void AddMovie_DuplicateID_ReturnsDuplicateID()
     {
@@ -75,7 +76,7 @@ public class AddMovieServiceTests
 
     }
 
-    //Tests that service will return Invalid year if year is too old for a movie to be made
+    //Verifies that service will return "InvalidYear" if release year is too old for a movie to be made
     [Fact]
     public void AddMovie_InvalidYear_PastYear()
     {
@@ -94,7 +95,7 @@ public class AddMovieServiceTests
         
     }
 
-     //Tests that service will return Invalid year if year is in the future, out of boundary
+    //Verifies that service will return "InvalidYear" if release year is in the future, out of boundary
     [Fact]
     public void AddMovie_InvalidYear_FutureYear()
     {
@@ -112,7 +113,7 @@ public class AddMovieServiceTests
         Assert.Equal("InvalidYear", result);
     }
 
-     //Tests that service will return Success if the year is the latest boundary year, the present year
+    //Verifies that service will return "Success" if the release year is the present year (just within boundary)
     [Fact]
     public void AddMovie_ValidYear_LatestBoundaryYear_PresentYear()
     {
@@ -130,7 +131,7 @@ public class AddMovieServiceTests
         Assert.Equal("Success", result);
     }
 
-     //Tests that service will return Success if year is the earliest boundary year of 1888
+    //Verifies that service will return "Success" if release year is the earliest boundary year of 1888
     [Fact]
     public void AddMovie_ValidYear_EarliestBoundaryYear_1888()
     {
@@ -148,15 +149,15 @@ public class AddMovieServiceTests
         Assert.Equal("Success", result);
     }
 
-     //Tests that service will return Invalid year if year is out of boundary, one year earlier than earliest boundary year
+    //Verifies that service will return "InvalidYear" if release year is just out of boundary, one year earlier than earliest boundary year
     [Fact]
-    public void AddMovie_InValidYear_JustOutOfBoundary_1887()
+    public void AddMovie_InvalidYear_JustOutOfBoundary_1887()
     {
         var service = new MovieService(); 
         var movie = new Movie 
         {
             Movie_ID = "M7",
-            Title = "One Year Eariler: Roundhay Garden Scene",
+            Title = "One Year Earlier: Roundhay Garden Scene",
             Director = "Louis Le Prince",
             Genre = "Short Film",
             Release_Year = 1887,
@@ -166,7 +167,7 @@ public class AddMovieServiceTests
         Assert.Equal("InvalidYear", result);
     }
 
-    //Stress test that sees if the Add Movie service can handle a lot (1000) of Movies
+    //Stress test that verifies the Add Movie service can handle a large amount (1000) of Movies
     [Fact]
     public void AddMovie_StressTest_1000Movies()
     {
@@ -193,9 +194,9 @@ public class AddMovieServiceTests
 //Tests for the Sort Movie services
 public class SortMovieServiceTests
 {
-    //Makes sure the Bubble sort arranges the movies by title
+    //Verifies that the Bubble sort arranges the movies by title
     [Fact] 
-    public void BubbleSortByTitle_Works() 
+    public void BubbleSortByTitle_ReturnsSortedTitles() 
     { 
         var service = new MovieService(); 
         service.AddMovie(new Movie
@@ -232,9 +233,9 @@ public class SortMovieServiceTests
         Assert.Equal("C", sorted[2].Title);
     }
 
-    //Makes sure the merge sort arrages the movies by year released 
+    //Verifies that the merge sort arranges the movies by year released 
     [Fact] 
-    public void MergeSortByYear_Works() 
+    public void MergeSortByYear_ReturnsSortedYears() 
     { 
         var service = new MovieService(); 
         service.AddMovie(new Movie
@@ -272,8 +273,10 @@ public class SortMovieServiceTests
     }
 }
 
+//Tests for the Search services
 public class SearchMovieServiceTests
 {
+    //list of movies to be used in the search tests
     private MovieService SearchServiceMovies()
     {
         var service = new MovieService(); 
@@ -308,8 +311,10 @@ public class SearchMovieServiceTests
         return service;
         
     }
+
+    //Verifies that Linear Search by Title finds the movie matching the search term title
     [Fact]
-    public void LinearSearchByTitle_Works()
+    public void LinearSearchByTitle_ReturnsMatchingMovie()
     {
         var service = SearchServiceMovies();
         var result = service.LinearSearchByTitle("Back");
@@ -317,8 +322,9 @@ public class SearchMovieServiceTests
         Assert.Equal("M13", result.First!.Value.Movie_ID);
     }
 
+    //Verifies that Linear Search by Title is not case sensitive
     [Fact]
-    public void LinearSearchByTitle_Works_NotCaseSensitive()
+    public void LinearSearchByTitle_ReturnsMatchingMovie_NotCaseSensitive()
     {
         var service = SearchServiceMovies();
         var result = service.LinearSearchByTitle("star");
@@ -326,16 +332,18 @@ public class SearchMovieServiceTests
         Assert.Equal("M14", result.First!.Value.Movie_ID);
     }
 
+    //Verifies that Linear Search by Title returns empty when no results matching search term are found
     [Fact]
-    public void LinearSearchByTitle_NoResultsFound()
+    public void LinearSearchByTitle_NoResultsFound_ReturnsEmpty()
     {
         var service = SearchServiceMovies();
         var result = service.LinearSearchByTitle("Fake Movie");
         Assert.Empty(result);
     }
 
+    //Verifies that Binary Search by ID finds the movie matching the search term ID
     [Fact]
-    public void BinarySearchBID_Works()
+    public void BinarySearchByID_ReturnsMatchingMovie()
     {
         var service = SearchServiceMovies();
         var result = service.BinarySearchByID("M13");
@@ -343,16 +351,18 @@ public class SearchMovieServiceTests
         Assert.Equal("M13", result.First!.Value.Movie_ID);
     }
 
+    //Verifies that Binary Search by ID returns empty when no result matching search term is found
     [Fact]
-    public void BinarySearchBID_NotFound_ReturnsEmpty()
+    public void BinarySearchByID_NotFound_ReturnsEmpty()
     {
         var service = SearchServiceMovies();
         var result = service.BinarySearchByID("M80");
         Assert.Empty(result);
     }
 
-     [Fact]
-    public void BinarySearchBID_Works_NotCaseSensitive()
+    //Verifies that Binary Search by ID is not case sensitive
+    [Fact]
+    public void BinarySearchByID_ReturnsMatchingMovie_NotCaseSensitive()
     {
         var service = SearchServiceMovies();
         var result = service.BinarySearchByID("m13");
@@ -361,4 +371,199 @@ public class SearchMovieServiceTests
     }
 
     
+}
+
+//Tests for Import and Export services
+public class ImportExportMovieServicesTests
+{
+    //Verifies that exporting to a JSON file creates a file with valid content
+    [Fact]
+    public void ExportToJson_ValidFile_CreatesFileWithContent()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        service.AddMovie(new Movie
+        {
+            Movie_ID = "M20",
+            Title = "Back to the Future",
+            Director = "Robert Zemeckis",
+            Genre = "Sci-Fi",
+            Release_Year = 1985,
+            Availability = "Available"
+        });
+        service.ExportToJson(tempFile);
+        Assert.True(File.Exists(tempFile));
+
+        var content = File.ReadAllText(tempFile);
+        Assert.False(string.IsNullOrWhiteSpace(content));
+
+        File.Delete(tempFile);
+    }
+
+    //Verifies that importing movies from a valid JSON file correctly adds to the collection
+    [Fact]
+    public void ImportFromJson_ValidFile_PopulatesCollection()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        var movies = new List<Movie>
+        { 
+            new Movie
+            {
+                Movie_ID = "M21",
+                Title = "Back to the Future",
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+            }
+        };
+        var json = JsonSerializer.Serialize(movies);
+        File.WriteAllText(tempFile, json);
+        service.ImportFromJson(tempFile);
+
+        var result = service.GetAll();
+        Assert.Single(result);
+        Assert.Equal("M21", result.First().Movie_ID);
+
+        File.Delete(tempFile);
+    }
+
+    //Verifies that importing from a non-existent file does nothing and does not crash
+    [Fact]
+    public void ImportFromJson_FileDoesNotExist_DoesNothing()
+    {
+        var service = new MovieService();
+        var fakePath = "fake_file.json";
+        service.ImportFromJson(fakePath);
+        Assert.Empty(service.GetAll());
+    }
+
+    //Verifies that importing movies replaces existing movies in collection
+    [Fact]
+    public void ImportFromJson_ValidFile_ReplacesExistingMovies()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        service.AddMovie(new Movie
+        {
+            Movie_ID = "OLD",
+            Title = "OLD Back to the Future",
+            Director = "Robert Zemeckis",
+            Genre = "Sci-Fi",
+            Release_Year = 1985,
+            Availability = "Available"
+        });
+
+        var newMovie = new List<Movie>
+        {
+            new Movie
+            {
+            Movie_ID = "NEW",
+            Title = "NEW Back to the Future",
+            Director = "Robert Zemeckis",
+            Genre = "Sci-Fi",
+            Release_Year = 1985,
+            Availability = "Available"
+            }
+        };
+
+        File.WriteAllText(tempFile, JsonSerializer.Serialize(newMovie));
+        service.ImportFromJson(tempFile);
+
+        var result = service.GetAll();
+        Assert.Single(result);
+        Assert.Equal("NEW", result.First().Movie_ID);
+
+        File.Delete(tempFile);
+    }
+
+    //Verifies that movies are sorted by ID when imported (required for the binary search to work)
+    [Fact]
+    public void ImportFromJson_ValidFile_MoviesSortedByID()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        var movies = new List<Movie>
+        { 
+            new Movie
+            {
+                Movie_ID = "M3",
+                Title = "Back to the Future 3",
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+            },
+            new Movie
+            {
+                Movie_ID = "M1",
+                Title = "Back to the Future 1",
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+            },
+            new Movie
+            {
+                Movie_ID = "M2",
+                Title = "Back to the Future 2",
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+            }
+        };
+        File.WriteAllText(tempFile, JsonSerializer.Serialize(movies));
+        service.ImportFromJson(tempFile);
+
+        var result = service.GetAll().ToList();
+        Assert.Equal("M1",result[0].Movie_ID);
+        Assert.Equal("M2",result[1].Movie_ID);
+        Assert.Equal("M3",result[2].Movie_ID);
+
+        File.Delete(tempFile);
+    }
+
+    //Verifies that importing invalid JSON does not crash the program or modify movie collection 
+    [Fact]
+    public void ImportFromJson_InvalidJson_DoesNotCrash()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        File.WriteAllText(tempFile, "Invalid JSON");
+        service.ImportFromJson(tempFile);
+        Assert.Empty(service.GetAll());
+
+        File.Delete(tempFile);
+    }
+
+    //Stress test that verifies the Import and Export services can handle a large amount (1000) of Movies
+    [Fact]
+    public void ImportExport_StressTest_1000Movies()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+
+        for (int i = 0; i<1000; i++)
+        {
+            service.AddMovie(new Movie
+            {
+                Movie_ID = "M" + i,
+                Title = "Back to the Future" + i,
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+            });
+        }
+        service.ExportToJson(tempFile);
+
+        var newService = new MovieService();
+        newService.ImportFromJson(tempFile);
+        var result = newService.GetAll();
+        Assert.Equal(1000,result.Count());
+
+        File.Delete(tempFile);
+    }
 }

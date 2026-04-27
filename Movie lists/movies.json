@@ -17,18 +17,18 @@
   },
   {
     "Movie_ID": "M3",
-    "Title": "That Darn Cat!",
-    "Director": "Robert Stevenson",
-    "Genre": "Comedy",
-    "Release_Year": 1965,
-    "Availability": "Available"
-  },
-  {
-    "Movie_ID": "M4",
     "Title": "The Final Countdown",
     "Director": "Don Taylor",
     "Genre": "Sci-Fi",
     "Release_Year": 1980,
+    "Availability": "Available"
+  },
+  {
+    "Movie_ID": "M4",
+    "Title": "That Darn Cat!",
+    "Director": "Robert Stevenson",
+    "Genre": "Comedy",
+    "Release_Year": 1965,
     "Availability": "Available"
   }
 ]
