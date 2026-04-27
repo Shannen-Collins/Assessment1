@@ -47,7 +47,7 @@ public class MovieService {
         var list = new LinkedList<Movie>(movies);
         //if there is less than 2 movies in the list, no sorting is needed
         if (list.Count < 2) return list;
-        //create swapped true or false varible to track when swapped are made
+        //create swapped true or false variable to track when swapped are made
         bool swapped;
         do
         {   //start with swapped set to false

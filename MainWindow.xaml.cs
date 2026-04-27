@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 using Assessment1.Model;
 using Assessment1.Services;
 
@@ -224,7 +225,7 @@ public partial class MainWindow : Window
 		//if the search textbox is not empty
 		if(!string.IsNullOrWhiteSpace(txtSearch.Text))
 		{
-			//clear text from searh textbox
+			//clear text from search textbox
 			txtSearch.Text= "";
 		}
 	}
@@ -253,6 +254,15 @@ public partial class MainWindow : Window
 				MessageBox.Show("Movies imported successfully!");
 			}
 		}
+		catch (IOException ex)
+		{
+   		 MessageBox.Show("File error: " + ex.Message);
+		}
+
+		catch (UnauthorizedAccessException ex)
+		{
+   		MessageBox.Show("You do not have permission to access this file. " + ex.Message);
+		}
 		catch (Exception ex)
 		{
 			MessageBox.Show("Import failed: " + ex.Message);
@@ -276,6 +286,16 @@ public partial class MainWindow : Window
 				MessageBox.Show("Movies exported successfully!");
 			}
 		}
+		catch (IOException ex)
+		{
+   		 MessageBox.Show("File error: " + ex.Message);
+		}
+
+		catch (UnauthorizedAccessException ex)
+		{
+   		MessageBox.Show("You do not have permission to access this file. " + ex.Message);
+		}
+
 		catch (Exception ex)
 		{
 			MessageBox.Show("Export failed: " + ex.Message);
