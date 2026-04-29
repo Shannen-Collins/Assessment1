@@ -378,164 +378,179 @@ public class ImportExportMovieServicesTests
 {
     //Verifies that exporting to a JSON file creates a file with valid content
     [Fact]
-    public void ExportToJson_ValidFile_CreatesFileWithContent()
+    public void ExportMovies_ValidFile_CreatesFileWithContent()
     {
         var service = new MovieService();
         var tempFile = Path.GetTempFileName();
-        service.AddMovie(new Movie
-        {
-            Movie_ID = "M20",
-            Title = "Back to the Future",
-            Director = "Robert Zemeckis",
-            Genre = "Sci-Fi",
-            Release_Year = 1985,
-            Availability = "Available"
-        });
-        service.ExportToJson(tempFile);
-        Assert.True(File.Exists(tempFile));
-
-        var content = File.ReadAllText(tempFile);
-        Assert.False(string.IsNullOrWhiteSpace(content));
-
-        File.Delete(tempFile);
-    }
-
-    //Verifies that importing movies from a valid JSON file correctly adds to the collection
-    [Fact]
-    public void ImportFromJson_ValidFile_PopulatesCollection()
-    {
-        var service = new MovieService();
-        var tempFile = Path.GetTempFileName();
-        var movies = new List<Movie>
-        { 
-            new Movie
+        try{
+            service.AddMovie(new Movie
             {
-                Movie_ID = "M21",
+                Movie_ID = "M20",
                 Title = "Back to the Future",
                 Director = "Robert Zemeckis",
                 Genre = "Sci-Fi",
                 Release_Year = 1985,
                 Availability = "Available"
-            }
-        };
-        var json = JsonSerializer.Serialize(movies);
-        File.WriteAllText(tempFile, json);
-        service.ImportFromJson(tempFile);
+            });
+            service.ExportMovies(tempFile);
+            Assert.True(File.Exists(tempFile));
 
-        var result = service.GetAll();
-        Assert.Single(result);
-        Assert.Equal("M21", result.First().Movie_ID);
+            var content = File.ReadAllText(tempFile);
+            Assert.False(string.IsNullOrWhiteSpace(content));
+        }
+        finally{
+            File.Delete(tempFile);
+        }
+    }
 
-        File.Delete(tempFile);
+    //Verifies that importing movies from a valid JSON file correctly adds to the collection
+    [Fact]
+    public void ImportMovies_ValidFile_PopulatesCollection()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        try{
+            var movies = new List<Movie>
+            { 
+                new Movie
+                {
+                    Movie_ID = "M21",
+                    Title = "Back to the Future",
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1985,
+                    Availability = "Available"
+                }
+            };
+            var json = JsonSerializer.Serialize(movies);
+            File.WriteAllText(tempFile, json);
+            service.ImportMoviesFromJson(tempFile);
+
+            var result = service.GetAll();
+            Assert.Single(result);
+            Assert.Equal("M21", result.First().Movie_ID);
+        }
+        finally{
+            File.Delete(tempFile);
+        }
     }
 
     //Verifies that importing from a non-existent file does nothing and does not crash
     [Fact]
-    public void ImportFromJson_FileDoesNotExist_DoesNothing()
+    public void ImportMovies_FileDoesNotExist_DoesNothing()
     {
         var service = new MovieService();
         var fakePath = "fake_file.json";
-        service.ImportFromJson(fakePath);
+        service.ImportMoviesFromJson(fakePath);
         Assert.Empty(service.GetAll());
     }
 
     //Verifies that importing movies replaces existing movies in collection
     [Fact]
-    public void ImportFromJson_ValidFile_ReplacesExistingMovies()
+    public void ImportMovies_ValidFile_ReplacesExistingMovies()
     {
         var service = new MovieService();
         var tempFile = Path.GetTempFileName();
-        service.AddMovie(new Movie
-        {
-            Movie_ID = "OLD",
-            Title = "OLD Back to the Future",
-            Director = "Robert Zemeckis",
-            Genre = "Sci-Fi",
-            Release_Year = 1985,
-            Availability = "Available"
-        });
-
-        var newMovie = new List<Movie>
-        {
-            new Movie
+        try{
+            service.AddMovie(new Movie
             {
-            Movie_ID = "NEW",
-            Title = "NEW Back to the Future",
-            Director = "Robert Zemeckis",
-            Genre = "Sci-Fi",
-            Release_Year = 1985,
-            Availability = "Available"
-            }
-        };
+                Movie_ID = "OLD",
+                Title = "OLD Back to the Future",
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+            });
 
-        File.WriteAllText(tempFile, JsonSerializer.Serialize(newMovie));
-        service.ImportFromJson(tempFile);
+            var newMovie = new List<Movie>
+            {
+                new Movie
+                {
+                Movie_ID = "NEW",
+                Title = "NEW Back to the Future",
+                Director = "Robert Zemeckis",
+                Genre = "Sci-Fi",
+                Release_Year = 1985,
+                Availability = "Available"
+                }
+            };
 
-        var result = service.GetAll();
-        Assert.Single(result);
-        Assert.Equal("NEW", result.First().Movie_ID);
+            File.WriteAllText(tempFile, JsonSerializer.Serialize(newMovie));
+            service.ImportMoviesFromJson(tempFile);
 
-        File.Delete(tempFile);
+            var result = service.GetAll();
+            Assert.Single(result);
+            Assert.Equal("NEW", result.First().Movie_ID);
+        }
+        finally{
+            File.Delete(tempFile);
+        }
     }
 
     //Verifies that movies are sorted by ID when imported (required for the binary search to work)
     [Fact]
-    public void ImportFromJson_ValidFile_MoviesSortedByID()
+    public void ImportMovies_ValidFile_MoviesSortedByID()
     {
         var service = new MovieService();
         var tempFile = Path.GetTempFileName();
-        var movies = new List<Movie>
-        { 
-            new Movie
-            {
-                Movie_ID = "M3",
-                Title = "Back to the Future 3",
-                Director = "Robert Zemeckis",
-                Genre = "Sci-Fi",
-                Release_Year = 1985,
-                Availability = "Available"
-            },
-            new Movie
-            {
-                Movie_ID = "M1",
-                Title = "Back to the Future 1",
-                Director = "Robert Zemeckis",
-                Genre = "Sci-Fi",
-                Release_Year = 1985,
-                Availability = "Available"
-            },
-            new Movie
-            {
-                Movie_ID = "M2",
-                Title = "Back to the Future 2",
-                Director = "Robert Zemeckis",
-                Genre = "Sci-Fi",
-                Release_Year = 1985,
-                Availability = "Available"
-            }
-        };
-        File.WriteAllText(tempFile, JsonSerializer.Serialize(movies));
-        service.ImportFromJson(tempFile);
+        try{
+            var movies = new List<Movie>
+            { 
+                new Movie
+                {
+                    Movie_ID = "M3",
+                    Title = "Back to the Future 3",
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1985,
+                    Availability = "Available"
+                },
+                new Movie
+                {
+                    Movie_ID = "M1",
+                    Title = "Back to the Future 1",
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1985,
+                    Availability = "Available"
+                },
+                new Movie
+                {
+                    Movie_ID = "M2",
+                    Title = "Back to the Future 2",
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1985,
+                    Availability = "Available"
+                }
+            };
+            File.WriteAllText(tempFile, JsonSerializer.Serialize(movies));
+            service.ImportMoviesFromJson(tempFile);
 
-        var result = service.GetAll().ToList();
-        Assert.Equal("M1",result[0].Movie_ID);
-        Assert.Equal("M2",result[1].Movie_ID);
-        Assert.Equal("M3",result[2].Movie_ID);
-
-        File.Delete(tempFile);
+            var result = service.GetAll().ToList();
+            Assert.Equal("M1",result[0].Movie_ID);
+            Assert.Equal("M2",result[1].Movie_ID);
+            Assert.Equal("M3",result[2].Movie_ID);
+        }
+        finally{
+            File.Delete(tempFile);
+        }
     }
 
     //Verifies that importing invalid JSON does not crash the program or modify movie collection 
     [Fact]
-    public void ImportFromJson_InvalidJson_DoesNotCrash()
+    public void ImportMovies_InvalidJson_ThrowsJsonException()
     {
         var service = new MovieService();
         var tempFile = Path.GetTempFileName();
-        File.WriteAllText(tempFile, "Invalid JSON");
-        service.ImportFromJson(tempFile);
-        Assert.Empty(service.GetAll());
-
-        File.Delete(tempFile);
+        try{
+            File.WriteAllText(tempFile, "Invalid JSON");
+            Assert.Throws<System.Text.Json.JsonException>(() => 
+            service.ImportMoviesFromJson(tempFile));
+        }
+        finally{
+            File.Delete(tempFile);
+        }
     }
 
     //Stress test that verifies the Import and Export services can handle a large amount (1000) of Movies
@@ -545,25 +560,154 @@ public class ImportExportMovieServicesTests
         var service = new MovieService();
         var tempFile = Path.GetTempFileName();
 
-        for (int i = 0; i<1000; i++)
-        {
-            service.AddMovie(new Movie
+        try{
+            for (int i = 0; i<1000; i++)
             {
-                Movie_ID = "M" + i,
-                Title = "Back to the Future" + i,
-                Director = "Robert Zemeckis",
-                Genre = "Sci-Fi",
-                Release_Year = 1985,
-                Availability = "Available"
-            });
+                service.AddMovie(new Movie
+                {
+                    Movie_ID = "M" + i,
+                    Title = "Back to the Future" + i,
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1985,
+                    Availability = "Available"
+                });
+            }
+            service.ExportMovies(tempFile);
+
+            var newService = new MovieService();
+            newService.ImportMoviesFromJson(tempFile);
+            var result = newService.GetAll();
+            Assert.Equal(1000,result.Count());
         }
-        service.ExportToJson(tempFile);
-
-        var newService = new MovieService();
-        newService.ImportFromJson(tempFile);
-        var result = newService.GetAll();
-        Assert.Equal(1000,result.Count());
-
-        File.Delete(tempFile);
+        finally{
+            File.Delete(tempFile);
+        }
     }
+}
+
+//Tests for borrow and return services
+public class BorrowReturnMovieServiceTests
+{
+    //movie used in the borrow and return tests
+    private MovieService BorrowReturnService()
+    {
+        var service = new MovieService();
+        service.AddMovie(new Movie
+        {
+            Movie_ID = "M1",
+            Title = "Back to the Future",
+            Director = "Robert Zemeckis",
+            Genre = "Sci-Fi",
+            Release_Year = 1985,
+            Availability = "Available"
+        });
+
+        return service;
+    }
+
+    //Verifies that borrowing an available movie returns "Borrowed"
+    [Fact]
+    public void BorrowMovie_AvailableMovie_ReturnsBorrowed()
+    {
+        var service = BorrowReturnService();
+        var result = service.BorrowMovie("M1", "Username");
+        Assert.Equal("Borrowed", result);
+    }
+
+    //Verifies that borrowing a movie with an invalid ID returns "NotFound"
+    [Fact]
+    public void BorrowMovie_InvalidID_ReturnsNotFound()
+    {
+        var service = BorrowReturnService();
+        var result = service.BorrowMovie("Invalid", "Username");
+        Assert.Equal("NotFound", result);
+    }
+
+    //Verifies that borrowing an already borrowed movie adds user to queue and returns "Queued"
+    [Fact]
+    public void BorrowMovie_AlreadyBorrowed_AddsToQueue()
+    {
+        var service = BorrowReturnService();
+        service.BorrowMovie("M1", "Username");
+        var result = service.BorrowMovie("M1", "SecondUsername");
+        Assert.Equal("Queued", result);
+    }
+
+    //Verifies that returning a movie that has no one in the waiting queue returns "Returned"
+    [Fact]
+    public void ReturnMovie_NoQueue_ReturnsReturned()
+    {
+        var service = BorrowReturnService();
+        service.BorrowMovie("M1", "Username");
+        var result = service.ReturnMovie("M1");
+        Assert.Equal("Returned", result);
+    }
+
+    //Verifies that returning a movie with an invalid ID returns "NotFound"
+    [Fact]
+    public void ReturnMovie_InvalidID_ReturnsNotFound()
+    {
+        var service = BorrowReturnService();
+        var result = service.ReturnMovie("Invalid");
+        Assert.Equal("NotFound", result);
+    }
+
+    //Verifies that returning a movie with a waiting queue assigns movie to next user, returns "Assigned to..."
+    [Fact]
+    public void ReturnMovie_WithQueue_AssignsToNextUser()
+    {
+        var service = BorrowReturnService();
+        service.BorrowMovie("M1", "Username");
+        service.BorrowMovie("M1", "SecondUsername");
+        var result = service.ReturnMovie("M1");
+        Assert.StartsWith("Assigned to:", result);
+        Assert.Contains("SecondUsername", result);
+    }
+
+    //Verifies that when a movie is returned and has a queue, the availability remains "Borrowed"
+    [Fact]
+    public void ReturnMovie_WithQueue_KeepsMovieBorrowed()
+    {
+        var service = BorrowReturnService();
+        service.BorrowMovie("M1", "Username");
+        service.BorrowMovie("M1", "SecondUsername");
+        service.ReturnMovie("M1");
+        var movie = service.GetAll().First();
+        Assert.Equal("Borrowed", movie.Availability);
+    }
+
+    //Verifies that users are added to queue in order
+    [Fact]
+    public void ReturnMovie_MultipleQueues_IsInOrder()
+    {
+        var service = BorrowReturnService();
+        service.BorrowMovie("M1", "Username1");
+        service.BorrowMovie("M1", "Username2");
+        service.BorrowMovie("M1", "Username3");
+        var result = service.ReturnMovie("M1");
+        Assert.Contains("Username2", result);
+    }
+
+    //Verifies that borrow history exports to file
+    [Fact]
+    public void BorrowHistory_ExportRecordHistory()
+    {
+        var service = BorrowReturnService();
+        var tempFile = Path.GetTempFileName();
+
+        try
+        {
+            service.BorrowMovie("M1", "Username");
+            service.ExportBorrowHistory(tempFile);
+            var content = File.ReadAllText(tempFile);
+            Assert.Contains("User, Username, borrowed M1", content);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+
 }
