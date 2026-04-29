@@ -417,8 +417,10 @@ public class MovieService {
 
     }
 
+    //exports borrow history to JSON file
     public void ExportBorrowHistory(string filePath)
-    {
+    {   
+        //runs export to JSON function with borrow history and chosen file path
         ExportToJson(borrowHistory, filePath);
     }
 

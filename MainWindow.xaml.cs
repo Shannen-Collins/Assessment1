@@ -109,7 +109,7 @@ public partial class MainWindow : Window
 		//if input Movie ID already exists in movie list, display message
 		if (result == "DuplicateID")
 		{
-			MessageBox.Show("This Movie ID already exists, please chose another");
+			MessageBox.Show("This Movie ID already exists, please choose another");
 			return;
 		}
 
@@ -123,7 +123,7 @@ public partial class MainWindow : Window
 		//if the result is anything else that is not a success, display unknown error message
 		if (result != "Success")
 		{	
-			MessageBox.Show("An unknown error has occured");
+			MessageBox.Show("An unknown error has occurred");
 			return;
 		}
 
@@ -376,7 +376,7 @@ public partial class MainWindow : Window
 		lblBorrowMovieAvailability.Content = "";
 		//makes borrowed message not visible
 		lblBorrowedMessage.Visibility = Visibility.Collapsed;
-		//clears inputed username details
+		//clears entered username details
 		txtUsername.Text = "";
 		//makes borrow panel not visible
 		borrowPanel.Visibility = Visibility.Collapsed; 
@@ -434,7 +434,7 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		//if movie is availble, it can't be returned, displays message
+		//if movie is available, it can't be returned, displays message
 		if (selectedMovie.Availability == "Available")
 		{
 			MessageBox.Show("This movie has not been borrowed, so it can't be returned.");
@@ -456,10 +456,10 @@ public partial class MainWindow : Window
 			MessageBox.Show("Movie returned successfully");
 		}
 		//if there is a user in a waiting queue for returned movie
-		else if (result.StartsWith("Assigned to"))
+		else if (result.StartsWith("Assigned to:"))
 		{
 			//get the username from the returned result
-			string user = result.Split(':')[1];
+			string user = result.Split(':')[1].Trim();
 			//display message notifying next user
 			MessageBox.Show($"Movie assigned to next user in the queue: {user}");
 		}
@@ -485,7 +485,7 @@ public partial class MainWindow : Window
 			{
 				//runs export borrow history service to convert to JSON and save it
 				movieService.ExportBorrowHistory(dialog.FileName);
-				MessageBox.Show("Borrower history exported successfully!");
+				MessageBox.Show("Borrow history exported successfully!");
 			}
 		}
 		 //file error handling
