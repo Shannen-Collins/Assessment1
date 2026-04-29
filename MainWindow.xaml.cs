@@ -257,7 +257,7 @@ public partial class MainWindow : Window
 			if (dialog.ShowDialog() == true)
 			{
 				//runs import service to load movies into system
-				movieService.ImportFromJson(dialog.FileName);
+				movieService.ImportMoviesFromJson(dialog.FileName);
 				//run refresh grid function
 				RefreshGrid();
 				//Shows success message
@@ -267,12 +267,22 @@ public partial class MainWindow : Window
 		//file error handling
 		catch (IOException ex)
 		{
-   		 MessageBox.Show("File error: " + ex.Message);
+   		 	MessageBox.Show("File error: " + ex.Message);
 		}
 		//permission error handling
 		catch (UnauthorizedAccessException ex)
 		{
-   		MessageBox.Show("You do not have permission to access this file. " + ex.Message);
+   			MessageBox.Show("You do not have permission to access this file. " + ex.Message);
+		}
+		//wrong JSON structure error handling 
+        catch (System.Text.Json.JsonException) 
+        { 
+        	MessageBox.Show("Invalid JSON file. Please select a valid Movie List file."); 
+        } 
+		//empty or invalid movie data error handling
+		catch (InvalidDataException)
+		{
+			MessageBox.Show("Invalid JSON File. Please select a valid Movie List file.");
 		}
 		//any other exception error handling
 		catch (Exception ex)
@@ -294,11 +304,11 @@ public partial class MainWindow : Window
 				Filter = "JSON Files (*.json)|*.json",
 				FileName = "movies.json"
 			};
-			//checks user selected file and clicked open
+			//checks user selected a file and clicked open
 			if (dialog.ShowDialog() == true)
 			{
-				//runs export service to convert to JSON and save it
-				movieService.ExportToJson(dialog.FileName);
+				//runs export movie service to convert to JSON and save it
+				movieService.ExportMovies(dialog.FileName);
 				MessageBox.Show("Movies exported successfully!");
 			}
 		}
@@ -325,7 +335,7 @@ public partial class MainWindow : Window
 		//gets movie from selected movie in datagrid
 		selectedMovie = dtgMovies.SelectedItem as Movie;
 
-		//is no movie is selected, displays message
+		//if no movie is selected, displays message
 		if(selectedMovie == null)
 		{
 			MessageBox.Show("Please select a movie to borrow");
@@ -339,7 +349,7 @@ public partial class MainWindow : Window
 		//if movie is already borrowed
 		if (selectedMovie.Availability == "Borrowed")
 		{
-			//mage borrowed message visible
+			//make borrowed message visible
 			lblBorrowedMessage.Visibility = Visibility.Visible;
 		}
 		
@@ -455,6 +465,44 @@ public partial class MainWindow : Window
 		}
 		//run refresh grid function
 		RefreshGrid();
+	}
+
+
+	//when export borrow history is clicked
+	public void btnExportHistory_Click(object sender, RoutedEventArgs e)
+	{	
+		//starts error handling
+		try{
+			//Opens Save as dialog to choose file location
+		 	var dialog = new Microsoft.Win32.SaveFileDialog
+			{
+			Filter = "JSON Files (*.json)|*.json",
+			FileName = "borrow_history.json"
+			};
+
+			//checks user selected a file and clicked open
+			if (dialog.ShowDialog() == true)
+			{
+				//runs export borrow history service to convert to JSON and save it
+				movieService.ExportBorrowHistory(dialog.FileName);
+				MessageBox.Show("Borrower history exported successfully!");
+			}
+		}
+		 //file error handling
+		catch (IOException ex)
+		{
+			MessageBox.Show("File error: " + ex.Message);
+		}
+		//permission error handling
+		catch (UnauthorizedAccessException ex)
+		{
+			MessageBox.Show("You do not have permission to access this file. " + ex.Message);
+		}
+		//any other exception error handling
+		catch (Exception ex)
+		{
+			MessageBox.Show("Export failed: " + ex.Message);
+		}
 	}
 
 }

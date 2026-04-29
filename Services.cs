@@ -15,6 +15,8 @@ public class MovieService {
     private Hashtable movieIDTable = new Hashtable();
     //queue to manage waiting list for borrowing movies
     private Dictionary<string, Queue<string>> waitingQueue = new();
+    //queue for borrow history
+    private Queue<string> borrowHistory = new Queue<string>();
 
     //Returns all movies stored in the collection for display in the UI
     public IEnumerable<Movie> GetAll() 
@@ -254,14 +256,11 @@ public class MovieService {
         return slow;
     }
 
-    //exports movie list to json file
-    public void ExportToJson(string filePath)
+    //exports chosen data to JSON file format
+    public void ExportToJson<T>(T data, string filePath)
     {
-        //converts movie linked list to list, json works better with list than linked list
-        var list = movies.ToList();
-
-        //converts movie list to json string
-        var json = JsonSerializer.Serialize(list, new JsonSerializerOptions
+        //converts export data to json string
+        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions
         {
             //formats json
             WriteIndented = true
@@ -271,8 +270,15 @@ public class MovieService {
         File.WriteAllText(filePath, json);
     }
 
+    //exports movie list to json file
+    public void ExportMovies(string filePath)
+    {
+        //runs export to JSON function on the movie list with selected file path
+        ExportToJson(movies.ToList(), filePath);
+    }
+
     //imports movie list from json file
-    public void ImportFromJson(string filePath)
+    public void ImportMoviesFromJson(string filePath)
     {
         //if file doesn't exist, don't import
         if (!File.Exists(filePath))
@@ -285,7 +291,8 @@ public class MovieService {
         var list = JsonSerializer.Deserialize<List<Movie>>(json);
 
         //if file is empty or invalid, stop
-        if (list == null || list.Count == 0) return;
+        if (list == null || list.Count == 0) 
+            throw new InvalidDataException("Empty or invalid movie data");
 
         //runs rebuild collection function
         RebuildMovieCollection(list);
@@ -350,6 +357,8 @@ public class MovieService {
         {
             //change status to borrowed
             movie.Availability = "Borrowed";
+            //adds borrowed record to borrow history
+            borrowHistory.Enqueue($"User, {username}, borrowed {movieID} at {DateTime.Now}");
             //return borrowed status
             return "Borrowed";
         }
@@ -362,6 +371,8 @@ public class MovieService {
         }
         //add user to waiting queue for movie
         waitingQueue[movieID].Enqueue(username);
+        //adds queued record to borrow history
+        borrowHistory.Enqueue($"User, {username}, queued for {movieID} at {DateTime.Now}");
         //return queued status
         return "Queued";
     }
@@ -379,8 +390,13 @@ public class MovieService {
         //if a waiting queue for the Movie ID doesn't exist or is empty
         if (!waitingQueue.ContainsKey(movieID) || waitingQueue[movieID].Count == 0)
         {
-            //make movie available and mark it as Returned
+            //make movie available 
             movie.Availability = "Available";
+
+            //adds movie return record to borrow history
+            borrowHistory.Enqueue($"{movieID} was returned at {DateTime.Now}");
+
+            //mark the movie as returned
             return "Returned";
         }
 
@@ -390,9 +406,20 @@ public class MovieService {
         //marks movie as borrowed again
         movie.Availability = "Borrowed";
 
+        //adds movie return record to borrow history
+        borrowHistory.Enqueue($"{movieID} was returned at {DateTime.Now}");
+
+        //adds auto borrowed record to borrow history
+        borrowHistory.Enqueue($"User, {nextUser}, automatically borrowed {movieID} at {DateTime.Now}");
+
         //returns notification information for next user
         return $"Assigned to: {nextUser}";
 
+    }
+
+    public void ExportBorrowHistory(string filePath)
+    {
+        ExportToJson(borrowHistory, filePath);
     }
 
 }
