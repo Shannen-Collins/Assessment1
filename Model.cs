@@ -10,7 +10,7 @@ public class Movie {
 	public int Release_Year { get; set; } 
 	public string Availability { get; set; } 
 
-//constructor that initailises Movie object with all properties
+//constructor that initialises Movie object with all properties
 public Movie(string id, string title, string director, string genre, int year, string availability)
     {
         Movie_ID = id;

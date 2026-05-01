@@ -49,7 +49,7 @@ public partial class MainWindow : Window
 	{
 		//makes the add movie panel disappear 
 		addPanel.Visibility = Visibility.Collapsed; 
-		//clears all test in add movie panel
+		//clears all text in add movie panel
 		txtMovieID.Text = ""; 
 		txtTitle.Text = ""; 
 		txtDirector.Text = ""; 
@@ -60,7 +60,7 @@ public partial class MainWindow : Window
 	//when Add Movie button is clicked
 	private void btnAddMovie_Click(object sender, RoutedEventArgs e) 
 	{ 	
-		//makes the add movie panel disappear 
+		//makes the add movie panel visible 
 		addPanel.Visibility = Visibility.Visible; 
 	} 
 
@@ -103,7 +103,7 @@ public partial class MainWindow : Window
 			Availability = "Available" 
 		}; 
 
-		//set movie service returns as result 
+		//set movie service return value as result 
 		string result = movieService.AddMovie(movie);
 
 		//if input Movie ID already exists in movie list, display message
@@ -120,7 +120,7 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		//if the result is anything else that is not a success, display unknown error message
+		//if the result is anything other than success, display unknown error message
 		if (result != "Success")
 		{	
 			MessageBox.Show("An unknown error has occurred");
@@ -170,7 +170,7 @@ public partial class MainWindow : Window
 	//when the Search by Title button is clicked
 	private void btnSearchTitle_Click(object sender, RoutedEventArgs e)
 	{
-		//runs Search pre-check function, if it fails then stop search
+		//runs search pre-check function and if it fails then stop search
 		if (SearchPreCheckSuccess() == false)
 		{
 			ClearSearchInput();
@@ -298,7 +298,7 @@ public partial class MainWindow : Window
 		//starts error handling
 		try
 		{
-			//Opens Save as dialog to choose file location
+			//opens Save As dialog to choose file location
 			var dialog = new Microsoft.Win32.SaveFileDialog
 			{
 				Filter = "JSON Files (*.json)|*.json",
@@ -335,7 +335,7 @@ public partial class MainWindow : Window
 		//gets movie from selected movie in datagrid
 		selectedMovie = dtgMovies.SelectedItem as Movie;
 
-		//if no movie is selected, displays message
+		//if no movie is selected, display message
 		if(selectedMovie == null)
 		{
 			MessageBox.Show("Please select a movie to borrow");
@@ -398,7 +398,7 @@ public partial class MainWindow : Window
 			return;
 		}
 
-		//run borrow movie service and set result to Movie ID of Borrowed movie and inputted username
+		//run borrow movie service and set result using selected Movie ID and entered username
 		string result = movieService.BorrowMovie(
 			selectedMovie.Movie_ID,
 			txtUsername.Text
@@ -458,7 +458,7 @@ public partial class MainWindow : Window
 		//if there is a user in a waiting queue for returned movie
 		else if (result.StartsWith("Assigned to:"))
 		{
-			//get the username from the returned result
+			//get the username from the returned result string
 			string user = result.Split(':')[1].Trim();
 			//display message notifying next user
 			MessageBox.Show($"Movie assigned to next user in the queue: {user}");
@@ -473,7 +473,7 @@ public partial class MainWindow : Window
 	{	
 		//starts error handling
 		try{
-			//Opens Save as dialog to choose file location
+			//opens Save As dialog to choose file location
 		 	var dialog = new Microsoft.Win32.SaveFileDialog
 			{
 			Filter = "JSON Files (*.json)|*.json",

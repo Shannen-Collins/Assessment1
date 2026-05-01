@@ -1,9 +1,7 @@
 using System.Collections;
 using Assessment1.Model;
 using System.Text.Json;
-using System.Xml.Serialization;
 using System.IO;
-using System.Linq;
 
 namespace Assessment1.Services;
 
@@ -36,7 +34,7 @@ public class MovieService {
         return "InvalidYear"; 
 
         //Sorts added movie by ID
-        InsertMovieSorted(movie);
+        InsertMovieSortedID(movie);
 
         //add Movie ID to hashtable
         movieIDTable[movie.Movie_ID] = movie; 
@@ -51,7 +49,7 @@ public class MovieService {
         var list = new LinkedList<Movie>(movies);
         //if there is less than 2 movies in the list, no sorting is needed
         if (list.Count < 2) return list;
-        //create swapped true or false variable to track when swapped are made
+        //creates swapped true or false variable to track when swaps are made
         bool swapped;
         do
         {   //start with swapped set to false
@@ -97,7 +95,7 @@ public class MovieService {
         //if there is less than 2 movies in the list, no sorting is needed
         if (list.Count < 2) return list;
 
-        //defines the middle of the list by spliting the list in half
+        //defines the middle of the list by splitting the list in half
         var middle = list.Count / 2;
 
         //creates new lists for each half
@@ -105,7 +103,7 @@ public class MovieService {
         var right = new LinkedList<Movie>();
 
         //for each movie in the list
-        //add it to either the left or right depending on if it is higher or lower than the middle
+        //add it to either the left or right depending on if it is lower or higher than the middle
         int index = 0;
         foreach (var movie in list)
         {
@@ -177,7 +175,7 @@ public class MovieService {
         //for each movie in list
         foreach(var movie in movies)
         {
-            //if it contain the search term
+            //if it contains the search term
             if (movie.Title.Contains(search, StringComparison.OrdinalIgnoreCase))
             {
                 //add movie to the new list
@@ -209,7 +207,7 @@ public class MovieService {
         //set end stop point as end of list
         LinkedListNode<Movie>? end = null;
 
-        //while start is not null or at the end, loop through list
+        //while start is not null and has not reached the end, loop through list
         while (start != null && start != end)
         {
             //set the middle to the Get Middle function results, to allow binary search on linked list (as part of requirements)
@@ -218,7 +216,7 @@ public class MovieService {
             //compare the middle ID value with the target ID value and set it as an integer
             int comparison = string.Compare(mid.Value.Movie_ID, targetID, StringComparison.OrdinalIgnoreCase);
 
-            //if the comparison integer is 0 or the middle
+            //if the comparison integer is 0, or the middle (match found)
             if (comparison == 0)
                 //then the target ID is found, and returns the ID value
                 return mid.Value;
@@ -235,7 +233,7 @@ public class MovieService {
         return null;
     }
 
-    //finds middle node using slow/fast poiter technique (required for binary search on linked list)
+    //finds middle node using slow/fast pointer technique (required for binary search on linked list)
     private LinkedListNode<Movie> GetMiddle(
         LinkedListNode<Movie> start, 
         LinkedListNode<Movie>? end)
@@ -244,7 +242,7 @@ public class MovieService {
         var slow = start; //moves 1 node at a time
         var fast = start; //moves 2 nodes at a time
 
-        //while fast is not and the end or next fast node is not null
+        //while fast is not null, not at the end, and the next fast node is not the end
         while (fast != end && fast !=null && fast.Next != end)
         {
             //set the fast as the value next to the next node (every 2 nodes)
@@ -309,14 +307,14 @@ public class MovieService {
         //for each movie in the imported list
        foreach (var movie in list)
         {
-            InsertMovieSorted(movie);
+            InsertMovieSortedID(movie);
             //add Movie ID to table
             movieIDTable[movie.Movie_ID] = movie;
         }
     }
     
     //function that ensures stored movie list is sorted by ID for binary search
-    private void InsertMovieSorted(Movie movie)
+    private void InsertMovieSortedID(Movie movie)
     {
        //if there are no movies in list
         if (movies.Count == 0)
@@ -329,15 +327,15 @@ public class MovieService {
         {
             //set current as first node of movie list
             var current = movies.First;
-            //go through list until added movie ID is bigger than the current movie ID on list
+            //go through list until added movie ID is greater than the current movie ID on list
             while (current != null && string.Compare(current.Value.Movie_ID, movie.Movie_ID, StringComparison.OrdinalIgnoreCase) < 0)
             {
                 //go to the next node
                 current = current.Next;
             }
-            //if ID is bigger than IDs in movie list, add movie to end of list
+            //if ID is greater than IDs in movie list, add movie to end of list
             if (current == null) movies.AddLast(movie);
-            //if node bigger than new ID is found, add movie before that node
+            //if node greater than new ID is found, add movie before that node
             else movies.AddBefore(current, movie);
         }
     }

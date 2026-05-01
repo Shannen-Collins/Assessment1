@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Assessment1.Tests;
 
-//Test to see if xUnit tests are set up and running correctly
+//Test to check if xUnit tests are set up and running correctly
 public class SmokeTests
 {
     [Fact]
@@ -15,7 +15,7 @@ public class SmokeTests
     }
 }
 
-//Tests for the Add Movie services
+//Tests for the Add Movie service
 public class AddMovieServiceTests
 {
     //Verifies movie list starts empty
@@ -27,7 +27,7 @@ public class AddMovieServiceTests
         Assert.Empty(result); 
     } 
 
-    //Verifies that a valid movie can be added to movie list using the Add Movie service function
+    //Verifies that a valid movie can be added to the movie list using the Add Movie service function
     [Fact] 
     public void AddMovie_ValidMovie_ReturnsSuccess() 
     { 
@@ -46,7 +46,7 @@ public class AddMovieServiceTests
         Assert.Single(service.GetAll());
     }
 
-    //Verifies that service will return "DuplicateID" if IDs are the same
+    //Verifies that the service will return "DuplicateID" if IDs are the same
     [Fact]
     public void AddMovie_DuplicateID_ReturnsDuplicateID()
     {
@@ -76,7 +76,7 @@ public class AddMovieServiceTests
 
     }
 
-    //Verifies that service will return "InvalidYear" if release year is too old for a movie to be made
+    //Verifies that the service will return "InvalidYear" if release year is too old for a movie to be made
     [Fact]
     public void AddMovie_InvalidYear_PastYear()
     {
@@ -95,7 +95,7 @@ public class AddMovieServiceTests
         
     }
 
-    //Verifies that service will return "InvalidYear" if release year is in the future, out of boundary
+    //Verifies that the service will return "InvalidYear" if release year is in the future, out of boundary
     [Fact]
     public void AddMovie_InvalidYear_FutureYear()
     {
@@ -113,7 +113,7 @@ public class AddMovieServiceTests
         Assert.Equal("InvalidYear", result);
     }
 
-    //Verifies that service will return "Success" if the release year is the present year (just within boundary)
+    //Verifies that the service will return "Success" if the release year is the present year (just within boundary)
     [Fact]
     public void AddMovie_ValidYear_LatestBoundaryYear_PresentYear()
     {
@@ -131,7 +131,7 @@ public class AddMovieServiceTests
         Assert.Equal("Success", result);
     }
 
-    //Verifies that service will return "Success" if release year is the earliest boundary year of 1888
+    //Verifies that the service will return "Success" if release year is the earliest boundary year of 1888
     [Fact]
     public void AddMovie_ValidYear_EarliestBoundaryYear_1888()
     {
@@ -149,7 +149,7 @@ public class AddMovieServiceTests
         Assert.Equal("Success", result);
     }
 
-    //Verifies that service will return "InvalidYear" if release year is just out of boundary, one year earlier than earliest boundary year
+    //Verifies that the service will return "InvalidYear" if release year is just out of boundary, one year earlier than earliest boundary year
     [Fact]
     public void AddMovie_InvalidYear_JustOutOfBoundary_1887()
     {
@@ -167,7 +167,7 @@ public class AddMovieServiceTests
         Assert.Equal("InvalidYear", result);
     }
 
-    //Stress test that verifies the Add Movie service can handle a large amount (1000) of Movies
+    //Stress test that verifies the Add Movie service can handle a large amount (1000) of movies
     [Fact]
     public void AddMovie_StressTest_1000Movies()
     {
@@ -194,7 +194,7 @@ public class AddMovieServiceTests
 //Tests for the Sort Movie services
 public class SortMovieServiceTests
 {
-    //Verifies that the Bubble sort arranges the movies by title
+    //Verifies that the bubble sort arranges the movies by title
     [Fact] 
     public void BubbleSortByTitle_ReturnsSortedTitles() 
     { 
@@ -233,7 +233,7 @@ public class SortMovieServiceTests
         Assert.Equal("C", sorted[2].Title);
     }
 
-    //Verifies that the merge sort arranges the movies by year released 
+    //Verifies that the merge sort arranges the movies by release year  
     [Fact] 
     public void MergeSortByYear_ReturnsSortedYears() 
     { 
@@ -332,7 +332,7 @@ public class SearchMovieServiceTests
         Assert.Equal("M14", result.First!.Value.Movie_ID);
     }
 
-    //Verifies that Linear Search by Title returns empty when no results matching search term are found
+    //Verifies that Linear Search by Title returns empty when no matching results are found
     [Fact]
     public void LinearSearchByTitle_NoResultsFound_ReturnsEmpty()
     {
@@ -351,7 +351,7 @@ public class SearchMovieServiceTests
         Assert.Equal("M13", result.First!.Value.Movie_ID);
     }
 
-    //Verifies that Binary Search by ID returns empty when no result matching search term is found
+    //Verifies that Binary Search by ID returns empty when no matching result is found
     [Fact]
     public void BinarySearchByID_NotFound_ReturnsEmpty()
     {
@@ -537,7 +537,7 @@ public class ImportExportMovieServicesTests
         }
     }
 
-    //Verifies that importing invalid JSON does not crash the program or modify movie collection 
+    //Verifies that importing invalid JSON does not crash the program or modify the movie collection 
     [Fact]
     public void ImportMovies_InvalidJson_ThrowsJsonException()
     {
@@ -553,7 +553,7 @@ public class ImportExportMovieServicesTests
         }
     }
 
-    //Stress test that verifies the Import and Export services can handle a large amount (1000) of Movies
+    //Stress test that verifies the import and export services can handle a large number (1000) of Movies
     [Fact]
     public void ImportExport_StressTest_1000Movies()
     {
@@ -653,7 +653,7 @@ public class BorrowReturnMovieServiceTests
         Assert.Equal("NotFound", result);
     }
 
-    //Verifies that returning a movie with a waiting queue assigns movie to next user, returns "Assigned to..."
+    //Verifies that returning a movie with a waiting queue assigns the movie to next user, returns "Assigned to..."
     [Fact]
     public void ReturnMovie_WithQueue_AssignsToNextUser()
     {
@@ -677,7 +677,7 @@ public class BorrowReturnMovieServiceTests
         Assert.Equal("Borrowed", movie.Availability);
     }
 
-    //Verifies that users are added to queue in order
+    //Verifies that users are added to the queue in order
     [Fact]
     public void ReturnMovie_MultipleQueues_IsInOrder()
     {
