@@ -16,6 +16,9 @@ public class MovieService {
     //queue for borrow history
     private Queue<string> borrowHistory = new Queue<string>();
 
+    //property to store number of invalid movie skipped during import
+    public int ImportSkipped {get; private set;}
+
     //Returns all movies stored in the collection for display in the UI
     public IEnumerable<Movie> GetAll() 
 	{ 
@@ -23,8 +26,19 @@ public class MovieService {
 	} 
 
     //runs Add Movie input checks 
-    public string AddMovie(Movie movie)
+    public string AddMovie(Movie? movie)
     {
+        //if movie data is null, return InvalidMovie
+        if (movie == null)
+        return "InvalidMovie";
+
+        //if movie data fields are empty, return InvalidMovieData
+        if (string.IsNullOrWhiteSpace(movie.Movie_ID) ||
+            string.IsNullOrWhiteSpace(movie.Title) ||
+            string.IsNullOrWhiteSpace(movie.Director) ||
+            string.IsNullOrWhiteSpace(movie.Genre))
+            return "InvalidMovieData";
+        
         //if the hashtable contains the input Movie ID, return DuplicateID
         if (movieIDTable.ContainsKey(movie.Movie_ID)) 
         return "DuplicateID"; 
@@ -304,12 +318,26 @@ public class MovieService {
         //resets lookup table
         movieIDTable.Clear();
 
+        //value for number of invalid movies skipped during import 
+        ImportSkipped = 0;
+
         //for each movie in the imported list
        foreach (var movie in list)
-        {
-            InsertMovieSortedID(movie);
-            //add Movie ID to table
-            movieIDTable[movie.Movie_ID] = movie;
+        {   
+            //skip null entries in imported JSON data
+            if (movie == null)
+            {
+                ImportSkipped++;
+                continue;
+            }
+            //run the add movie function
+            var result = AddMovie(movie);
+
+            //if there is an invalid movie, add to skipped counter
+            if (result != "Success")
+            {
+                ImportSkipped++;
+            }
         }
     }
     

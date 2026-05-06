@@ -167,6 +167,34 @@ public class AddMovieServiceTests
         Assert.Equal("InvalidYear", result);
     }
 
+    //Verifies that the service will return "InvalidMovie" if the movie is null, ensuring null movies are rejected
+    [Fact]
+    public void AddMovie_NullMovie_ReturnsInvalidMovie()
+    {
+        var service = new MovieService();
+        var result = service.AddMovie(null);
+        Assert.Equal("InvalidMovie", result);
+    }
+
+    //Verifies that the service will return "InvalidMovieData" if the required movie fields are empty
+    [Fact]
+    public void AddMovie_EmptyFields_ReturnsInvalidMovieData()
+    {
+        var service = new MovieService();
+        var movie = new Movie
+        {
+            Movie_ID = "",
+            Title = "",
+            Director = "",
+            Genre = "",
+            Release_Year = 2000,
+            Availability = "Available"
+        };
+
+        var result = service.AddMovie(movie);
+        Assert.Equal("InvalidMovieData", result);
+    }
+
     //Stress test that verifies the Add Movie service can handle a large amount (1000) of movies
     [Fact]
     public void AddMovie_StressTest_1000Movies()
@@ -581,6 +609,44 @@ public class ImportExportMovieServicesTests
             Assert.Equal(1000,result.Count());
         }
         finally{
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public void ImportMovie_DuplicateID_SkipsDuplicate()
+    {
+        var service = new MovieService();
+        var tempFile = Path.GetTempFileName();
+        try{
+            var movies = new List<Movie>
+            { 
+                new Movie
+                {
+                    Movie_ID = "M1",
+                    Title = "Back to the Future",
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1985,
+                    Availability = "Available"
+                },
+                new Movie
+                {
+                    Movie_ID = "M1",
+                    Title = "Back to the Future 2",
+                    Director = "Robert Zemeckis",
+                    Genre = "Sci-Fi",
+                    Release_Year = 1989,
+                    Availability = "Available"
+                }
+            };
+            File.WriteAllText(tempFile, JsonSerializer.Serialize(movies));
+            service.ImportMoviesFromJson(tempFile);
+            var result = service.GetAll();
+            Assert.Single(result);
+        }
+        finally
+        {
             File.Delete(tempFile);
         }
     }

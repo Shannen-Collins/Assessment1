@@ -106,6 +106,13 @@ public partial class MainWindow : Window
 		//set movie service return value as result 
 		string result = movieService.AddMovie(movie);
 
+		//if the movie details are null or empty, display message
+		if (result == "InvalidMovie" || result == "InvalidMovieData")
+		{
+			MessageBox.Show("Invalid movie data. Please check all fields.");
+			return;
+		}
+
 		//if input Movie ID already exists in movie list, display message
 		if (result == "DuplicateID")
 		{
@@ -260,8 +267,16 @@ public partial class MainWindow : Window
 				movieService.ImportMoviesFromJson(dialog.FileName);
 				//run refresh grid function
 				RefreshGrid();
-				//Shows success message
+
+				//if there were invalid movies that were skipped, display message
+				if (movieService.ImportSkipped > 0)
+				{
+					MessageBox.Show($"Movies imported successfully! Invalid Movies Skipped: {movieService.ImportSkipped}");
+				}
+				else {
+				//otherwise, show plain success message
 				MessageBox.Show("Movies imported successfully!");
+				}
 			}
 		}
 		//file error handling

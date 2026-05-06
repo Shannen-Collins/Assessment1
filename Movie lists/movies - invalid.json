@@ -1,0 +1,34 @@
+[
+  {
+    "Movie_ID": "M1",
+    "Title": "Back to the Future",
+    "Director": "Robert Zemeckis",
+    "Genre": "Sci-Fi",
+    "Release_Year": 1985,
+    "Availability": "Available"
+  },
+  {
+    "Movie_ID": "M1",
+    "Title": "Star Wars",
+    "Director": "George Lucas",
+    "Genre": "Sci-Fi",
+    "Release_Year": 1977,
+    "Availability": "Available"
+  },
+  {
+    "Movie_ID": "M3",
+    "Title": "The Final Countdown",
+    "Director": "Don Taylor",
+    "Genre": "Sci-Fi",
+    "Release_Year": 2080,
+    "Availability": "Available"
+  },
+  {
+    "Movie_ID": "M4",
+    "Title": "That Darn Cat!",
+    "Director": "Robert Stevenson",
+    "Genre": "Comedy",
+    "Release_Year": 1965,
+    "Availability": "Available"
+  }
+]
